@@ -11,15 +11,23 @@ public class LottoApplikation
     private static List<Integer> unglückszahlen = new ArrayList<>();
     public static void main(String[] args)
     {
-        System.out.println(">> Geben Sie an, welche Tippreihe Sie verwenden wollen Lotto oder Eurojackpot:");
+        String antwort = "Ja";
         Scanner scanner = new Scanner(System.in);
 
-        überprüfeLotterieEingabe(scanner);
-        
-        System.out.println(">> Geben Sie bis zu 6 Unglückszahlen die ausgeschlossen werden sollen:");
+        while (antwort.equalsIgnoreCase("Ja")) {
+            System.out.println(">> Geben Sie an, welche Tippreihe Sie verwenden wollen Lotto oder Eurojackpot:");
+            
 
-        überprüfeZahlenEingabe(scanner);
-        lotterie.generiereTippreihe(unglückszahlen);
+            überprüfeLotterieEingabe(scanner);
+            
+            System.out.println(">> Geben Sie bis zu 6 Unglückszahlen die ausgeschlossen werden sollen:");
+
+            überprüfeZahlenEingabe(scanner);
+            lotterie.generiereTippreihe(unglückszahlen);
+            System.out.println(">> Wollen Sie eine weitere Tippreihe generieren? Dann geben Ja oder Nein ein.");
+            antwort = überprüfeAntwortEingabe(scanner);
+        }
+        
 
         scanner.close();
     }
@@ -67,9 +75,9 @@ public class LottoApplikation
                 for (String s : zahlEingaben) {
                     int zahl = Integer.parseInt(s);
                     if(lotterie instanceof Lotto){
-                        istGültig = (zahl > 0 || zahl <= 49);
+                        istGültig = (zahl > 0 && zahl <= 49);
                     } else if (lotterie instanceof Eurojackpot) {
-                        istGültig = (zahl > 0 || zahl <= 50);
+                        istGültig = (zahl > 0 && zahl <= 50);
                     }
                     
                     if(!unglückszahlen.contains(zahl) && istGültig){
@@ -84,10 +92,28 @@ public class LottoApplikation
             }
             catch (Exception e) {
                 System.out.println(e.getMessage());
-                überprüfeZahlenEingabe(scanner);
             }
         }
         
-        System.out.println(">> Sie haben " + eingabe + " ausgewählt.");
+        System.out.println(">> Die Zahlen wurden gespeichert.");
+    }
+
+    private static String überprüfeAntwortEingabe(Scanner scanner){
+        boolean istGültig = false;
+        String eingabe = "";
+        while(!istGültig){
+             eingabe = scanner.nextLine();
+            try {
+                if(eingabe.equalsIgnoreCase("Ja")|| eingabe.equalsIgnoreCase("Nein")){
+                    istGültig = true;
+                } 
+                else{
+                    throw new InputMismatchException(">> Inkorrekte Eingabe. Bitte geben Sie entweder Ja oder Nein an.");
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return eingabe;
     }
 }
