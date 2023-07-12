@@ -1,5 +1,8 @@
 package com.quicktipp;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -9,26 +12,26 @@ public class LottoApplikation
 {
     private static ZahlenLotterie lotterie;
     private static List<Integer> unglückszahlen = new ArrayList<>();
+    private static final String DATEI_PFAD = "Unglückszahlen.txt";
     public static void main(String[] args)
     {
-        String antwort = "Ja";
+        String istNeueTippreihe = "Ja";
         Scanner scanner = new Scanner(System.in);
 
-        while (antwort.equalsIgnoreCase("Ja")) {
+        while (istNeueTippreihe.equalsIgnoreCase("Ja")) {
+            ladeUnglückszahlen();
             System.out.println(">> Geben Sie an, welche Tippreihe Sie verwenden wollen Lotto oder Eurojackpot:");
-            
-
             überprüfeLotterieEingabe(scanner);
             
             System.out.println(">> Geben Sie bis zu 6 Unglückszahlen die ausgeschlossen werden sollen:");
-
             überprüfeZahlenEingabe(scanner);
-            lotterie.generiereTippreihe(unglückszahlen);
-            System.out.println(">> Wollen Sie eine weitere Tippreihe generieren? Dann geben Ja oder Nein ein.");
-            antwort = überprüfeAntwortEingabe(scanner);
-        }
-        
 
+            lotterie.generiereTippreihe(unglückszahlen);
+            speichereUnglückszahlen();
+
+            System.out.println(">> Wollen Sie eine weitere Tippreihe generieren? Dann geben Ja oder Nein ein.");
+            istNeueTippreihe = überprüfeAntwortEingabe(scanner);
+        }
         scanner.close();
     }
 
@@ -60,6 +63,7 @@ public class LottoApplikation
     private static void überprüfeZahlenEingabe(Scanner scanner){
         boolean istGültig = false;
         String eingabe = "";
+
         while(!istGültig){
             eingabe = scanner.nextLine();
             try {
@@ -68,18 +72,20 @@ public class LottoApplikation
                     break;
                 }
 
-                if(zahlEingaben.length > 6){
-                    throw new InputMismatchException(">> Inkorrekte Eingabe. Sie können nur bis zu 6 Zahlen eingeben.");
-                }
-
                 for (String s : zahlEingaben) {
+                    System.out.println(s);
                     int zahl = Integer.parseInt(s);
                     if(lotterie instanceof Lotto){
                         istGültig = (zahl > 0 && zahl <= 49);
                     } else if (lotterie instanceof Eurojackpot) {
                         istGültig = (zahl > 0 && zahl <= 50);
                     }
-                    
+
+                    if(zahlEingaben.length > 6){
+                        istGültig = false;
+                        throw new InputMismatchException(">> Inkorrekte Eingabe. Sie können nur bis zu 6 Zahlen eingeben.");
+                    }
+
                     if(!unglückszahlen.contains(zahl) && istGültig){
                         unglückszahlen.add(zahl);
                     }
@@ -87,8 +93,10 @@ public class LottoApplikation
                         throw new InputMismatchException(">> Inkorrekte Eingabe. Die Zahl liegt nicht im korrekten Zahlenraum.");
                     }
                 }
-            } catch (NumberFormatException e){
-                System.out.println(eingabe + " ist keine Zahl. Bitte geben ganze Zahlen an.");
+            }
+            catch (NumberFormatException e){
+                istGültig = false;
+                System.out.println(eingabe + " ist keine Zahl. Bitte geben nur ganze Zahlen an.");
             }
             catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -115,5 +123,43 @@ public class LottoApplikation
             }
         }
         return eingabe;
+    }
+
+    private static void speichereUnglückszahlen(){
+        File datei = new File(DATEI_PFAD);
+        try {
+            if (!datei.exists()) {
+                datei.createNewFile();
+                
+            }
+            FileWriter writer = new FileWriter(DATEI_PFAD);
+            unglückszahlen.sort(null);
+            for (Integer integer : unglückszahlen) {               
+                writer.write(integer.toString() + "\n");             
+            }
+            writer.close();
+            
+        } catch (IOException e) {
+            System.out.println("Ein Fahler");
+        }
+    }
+
+    private static void ladeUnglückszahlen(){
+        File datei = new File("Unglückszahlen.txt");
+        unglückszahlen = new ArrayList<>();
+
+        if(datei.exists()){
+            try {
+                Scanner scanner = new Scanner(datei);
+                while (scanner.hasNextLine()) {
+                    String data = scanner.nextLine();
+                    unglückszahlen.add(Integer.parseInt(data));
+                }
+                scanner.close();
+            } catch (IOException e) {
+                System.out.println("Ein Fahler");
+            }
+            System.out.println("Lade Nummer...");
+        }
     }
 }
