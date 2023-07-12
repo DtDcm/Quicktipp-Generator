@@ -6,6 +6,10 @@ import java.util.Random;
 
 public abstract class ZahlenLotterie implements TippreihenGenerator {
 
+    public abstract void generiereTippreihe(List<Integer> unglückszahlen);
+    
+    public abstract boolean istGültigeZahl(int zahl);
+
     public List<Integer> generiereZahlen(List<Integer> unglückszahlen, int max, int zahlenraum){
         Random random = new Random();
         List<Integer> zahlen = new ArrayList<>();
@@ -21,6 +25,4 @@ public abstract class ZahlenLotterie implements TippreihenGenerator {
 
         return zahlen;
     }
-
-    public abstract void generiereTippreihe(List<Integer> unglückszahlen);
 }

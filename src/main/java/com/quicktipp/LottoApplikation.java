@@ -20,10 +20,21 @@ public class LottoApplikation
 
         while (istNeueTippreihe.equalsIgnoreCase("Ja")) {
             ladeUnglückszahlen();
-            System.out.println(">> Geben Sie an, welche Tippreihe Sie verwenden wollen Lotto oder Eurojackpot:");
+            System.out.println(">> Geben Sie an, welche Tippreihe Sie verwenden wollen:\n -- Lotto \n -- Eurojackpot");
             überprüfeLotterieEingabe(scanner);
+
+            if (!unglückszahlen.isEmpty()) {
+                List<Integer> zuLöschen = überprüfeLöschEingabe(scanner);
+                if (zuLöschen == null) {
+                    löschealleUnglückszahlen();
+                    System.out.println("test");
+                } else if(!zuLöschen.isEmpty()){
+                    löscheUnglückszahlen(zuLöschen);
+                }
+            }
             
-            System.out.println(">> Geben Sie bis zu 6 Unglückszahlen die ausgeschlossen werden sollen:");
+            
+            System.out.println(">> Geben Sie bis zu 6 Unglückszahlen die ausgeschlossen werden sollen, zum Bespiel 3 13 24 40 31:");
             überprüfeZahlenEingabe(scanner);
 
             lotterie.generiereTippreihe(unglückszahlen);
@@ -36,19 +47,18 @@ public class LottoApplikation
     }
 
     private static void überprüfeLotterieEingabe(Scanner scanner){
-        boolean istGültig = false;
         String eingabe = "";
-        while(!istGültig){
-             eingabe = scanner.nextLine();
+        while(true){
+             eingabe = scanner.nextLine().trim();
             try {
                 if(eingabe.equalsIgnoreCase("Lotto") || eingabe.isEmpty()){
-                    istGültig = true;
                     eingabe = "Lotto";
                     lotterie = new Lotto();
+                    break;
                 } else if (eingabe.equalsIgnoreCase("Eurojackpot")){
-                    istGültig = true;
                     eingabe = "Eurojackpot";
                     lotterie = new Eurojackpot();
+                    break;
                 }
                 else{
                     throw new InputMismatchException(">> Inkorrekte Eingabe. Bitte geben Sie entweder Lotto oder Eurojackpot an.");
@@ -61,59 +71,55 @@ public class LottoApplikation
     }
 
     private static void überprüfeZahlenEingabe(Scanner scanner){
-        boolean istGültig = false;
         String eingabe = "";
+        List<Integer> tempList = new ArrayList<>();
 
-        while(!istGültig){
-            eingabe = scanner.nextLine();
+        while(true){
+            eingabe = scanner.nextLine().trim();
+            tempList.clear();
             try {
-                String[] zahlEingaben = eingabe.split(" ");
+                String[] zahlEingaben = eingabe.split("\\s+");
+
                 if(eingabe.isEmpty()){
                     break;
                 }
 
+                int count = 0;
                 for (String s : zahlEingaben) {
-                    System.out.println(s);
                     int zahl = Integer.parseInt(s);
-                    if(lotterie instanceof Lotto){
-                        istGültig = (zahl > 0 && zahl <= 49);
-                    } else if (lotterie instanceof Eurojackpot) {
-                        istGültig = (zahl > 0 && zahl <= 50);
+                    if(!lotterie.istGültigeZahl(zahl)){
+                        throw new InputMismatchException(">> Inkorrekte Eingabe. Es gibt Zahlen, die nicht im korrekten Zahlenraum liegen.");
                     }
 
-                    if(zahlEingaben.length > 6){
-                        istGültig = false;
-                        throw new InputMismatchException(">> Inkorrekte Eingabe. Sie können nur bis zu 6 Zahlen eingeben.");
+                    if(!tempList.contains(zahl) && !unglückszahlen.contains(zahl)){
+                        tempList.add(zahl);
                     }
-
-                    if(!unglückszahlen.contains(zahl) && istGültig){
-                        unglückszahlen.add(zahl);
-                    }
-                    else if(!istGültig){
-                        throw new InputMismatchException(">> Inkorrekte Eingabe. Die Zahl liegt nicht im korrekten Zahlenraum.");
-                    }
+                    count++;
                 }
+
+                if(count > 6){
+                    throw new InputMismatchException(">> Inkorrekte Eingabe. Sie können nur bis zu 6 Zahlen eingeben.");
+                }
+                break;
             }
             catch (NumberFormatException e){
-                istGültig = false;
-                System.out.println(eingabe + " ist keine Zahl. Bitte geben nur ganze Zahlen an.");
+                System.out.println(">> Inkorrekte Eingabe. Die Eingabe darf nur ganze Zahlen enhalten.");
             }
             catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         }
-        
-        System.out.println(">> Die Zahlen wurden gespeichert.");
+
+        unglückszahlen.addAll(tempList);
     }
 
     private static String überprüfeAntwortEingabe(Scanner scanner){
-        boolean istGültig = false;
         String eingabe = "";
-        while(!istGültig){
-             eingabe = scanner.nextLine();
+        while(true){
+             eingabe = scanner.nextLine().trim();
             try {
                 if(eingabe.equalsIgnoreCase("Ja")|| eingabe.equalsIgnoreCase("Nein")){
-                    istGültig = true;
+                    break;
                 } 
                 else{
                     throw new InputMismatchException(">> Inkorrekte Eingabe. Bitte geben Sie entweder Ja oder Nein an.");
@@ -130,7 +136,6 @@ public class LottoApplikation
         try {
             if (!datei.exists()) {
                 datei.createNewFile();
-                
             }
             FileWriter writer = new FileWriter(DATEI_PFAD);
             unglückszahlen.sort(null);
@@ -159,7 +164,101 @@ public class LottoApplikation
             } catch (IOException e) {
                 System.out.println("Ein Fahler");
             }
-            System.out.println("Lade Nummer...");
+        }
+    }
+
+    private static List<Integer> überprüfeLöschEingabe(Scanner scanner){
+        String eingabe = "";
+        List<Integer> tempList = new ArrayList<>();
+        System.out.println(">> Diese wurden schon gespeichert:\n>> " 
+        + unglückszahlen.toString() 
+        + "\n>> Wollen SIe Zahlen löschen:"
+        + "\n -- Geben Sie die Zahlen ein, die aus der Datei entfernt werden sollen"
+        + "\n -- Geben Sie Alle, wenn Sie alle gespeicherten Zahlen löschen wollen"
+        + "\n -- Drücke Enter, wenn Sie keine Zahl löschen wollen");
+
+        while(true){
+            eingabe = scanner.nextLine().trim();
+            tempList.clear();
+            try {
+                if (eingabe.equalsIgnoreCase("Alle")) {
+                    return null;
+                }
+                String[] zahlEingaben = eingabe.split("\\s+");
+
+                if(eingabe.isEmpty()){
+                    break;
+                }
+
+                for (String s : zahlEingaben) {
+                    int zahl = Integer.parseInt(s);
+                    if(zahl < 0 && zahl > 50){
+                        throw new InputMismatchException(">> Inkorrekte Eingabe. Es gibt Zahlen, die nicht im korrekten Zahlenraum liegen.");
+                    }
+                    if(!tempList.contains(zahl)){
+                        tempList.add(zahl);
+                    }
+                }
+                break;
+            }
+            catch (NumberFormatException e){
+                System.out.println(">> Inkorrekte Eingabe. Die Eingabe darf nur ganze Zahlen enhalten.");
+            }
+            catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        return tempList;
+    }
+
+    private static void löscheUnglückszahlen(List<Integer> zahlenZuLöschen){
+        File file = new File(DATEI_PFAD);
+        if(file.exists()){
+            try {
+                File datei = new File(DATEI_PFAD);
+
+                ArrayList<Integer> zahlenInDatei = new ArrayList<>();
+
+                for (Integer gespeicherteZahl : unglückszahlen) {
+                    if (!zahlenZuLöschen.contains(gespeicherteZahl)) {
+                        zahlenInDatei.add(gespeicherteZahl);
+                    }
+                }
+                unglückszahlen.removeAll(zahlenZuLöschen);
+
+                FileWriter writer = new FileWriter(datei);
+
+                for (int zahl : zahlenInDatei) {
+                    writer.write(String.valueOf(zahl) + "\n");
+                }
+
+                writer.close();
+            } catch (IOException e) {
+
+            } catch (NumberFormatException e) {
+
+            }
+
+        }
+    }
+
+    private static void löschealleUnglückszahlen(){
+        File file = new File(DATEI_PFAD);
+        if(file.exists()){
+            try {
+                File datei = new File(DATEI_PFAD);
+                FileWriter writer = new FileWriter(datei);
+
+                writer.write("");
+                writer.close();
+                unglückszahlen.clear();
+            } catch (IOException e) {
+
+            } catch (NumberFormatException e) {
+
+            }
+
         }
     }
 }
