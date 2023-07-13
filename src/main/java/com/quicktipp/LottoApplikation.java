@@ -90,9 +90,9 @@ public class LottoApplikation
             try {
                 isValid = überprüfeZahlenEingabe(eingabe);
             } catch (NumberFormatException e){
-            System.out.println(">> Inkorrekte Eingabe. Die Eingabe darf nur ganze Zahlen enhalten.");
+                System.out.println(">> Inkorrekte Eingabe. Die Eingabe darf nur ganze Zahlen enhalten.");
             }
-            catch (Exception e) {
+            catch (InputMismatchException e) {
                 System.out.println(e.getMessage());
             }
             
@@ -151,7 +151,16 @@ public class LottoApplikation
                 if(eingabe.isEmpty()){
                     break;
                 }
-                isValid = überprüfeLöschEingabe(eingabe);
+                try{
+                    isValid = überprüfeLöschEingabe(eingabe);
+                }
+                catch (NumberFormatException e){
+                    System.out.println(">> Inkorrekte Eingabe. Die Eingabe darf nur ganze Zahlen enhalten.");
+                }
+                catch (InputMismatchException e) {
+                    System.out.println(e.getMessage());
+                }
+                
         }
         if(!eingabe.isEmpty() && !eingabe.equalsIgnoreCase("Alle")){
             System.out.println(eingabe);
@@ -172,28 +181,21 @@ public class LottoApplikation
         unglückszahlen = dateiUtil.ladeUnglückszahlen();
     }
 
-    public boolean überprüfeLöschEingabe(String eingabe){
+    public boolean überprüfeLöschEingabe(String eingabe) throws NumberFormatException, InputMismatchException{
 
         String[] zahlEingaben = eingabe.split("\\s+");
         boolean isValid = false;
-        try{
-            for (String s : zahlEingaben) {
-                int zahl = Integer.parseInt(s);
-                if(zahl > 0 && zahl <= 50){
-                    isValid = true;
-                }
-                else{
-                    isValid = false;
-                    throw new InputMismatchException(">> Inkorrekte Eingabe. Es gibt Zahlen, die nicht im korrekten Zahlenraum liegen.");
-                }
+        for (String s : zahlEingaben) {
+            int zahl = Integer.parseInt(s);
+            if(zahl > 0 && zahl <= 50){
+                isValid = true;
+            }
+            else{
+                isValid = false;
+                throw new InputMismatchException(">> Inkorrekte Eingabe. Es gibt Zahlen, die nicht im korrekten Zahlenraum liegen.");
             }
         }
-        catch (NumberFormatException e){
-            System.out.println(">> Inkorrekte Eingabe. Die Eingabe darf nur ganze Zahlen enhalten.");
-        }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        
         return isValid;
     }
     
@@ -204,23 +206,23 @@ public class LottoApplikation
 
         while(!isValid){
              eingabe = scanner.nextLine().trim();
-             isValid = überprüfeAntwortEingabe(eingabe);
-        }
-        return eingabe;
-    }
-
-    public boolean überprüfeAntwortEingabe(String eingabe){
-        boolean isValid = false;
-            try {
-                if(eingabe.equalsIgnoreCase("Ja")|| eingabe.equalsIgnoreCase("Nein")){
-                    isValid = true;
-                } 
-                else{
-                    throw new InputMismatchException(">> Inkorrekte Eingabe. Bitte geben Sie entweder Ja oder Nein an.");
-                }
-            } catch (Exception e) {
+             try{
+                isValid = überprüfeAntwortEingabe(eingabe);
+             } catch (InputMismatchException e) {
                 System.out.println(e.getMessage());
             }
+        }
+        return eingabe.toLowerCase();
+    }
+
+    public boolean überprüfeAntwortEingabe(String eingabe) throws InputMismatchException{
+        boolean isValid = false;
+        if(eingabe.equalsIgnoreCase("Ja")|| eingabe.equalsIgnoreCase("Nein")){
+            isValid = true;
+        } 
+        else{
+            throw new InputMismatchException(">> Inkorrekte Eingabe. Bitte geben Sie entweder Ja oder Nein an.");
+        }
         return isValid;
     }
 }
