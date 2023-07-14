@@ -6,9 +6,13 @@ import java.util.Random;
 
 public abstract class ZahlenLotterie implements TippreihenGenerator {
 
+    List<Integer> zahlen;
+
     public abstract void generiereTippreihe(List<Integer> unglückszahlen);
     
     public abstract boolean istGültigeZahl(int zahl);
+    
+    public abstract String getLotterieName();
 
     public List<Integer> generiereZahlen(List<Integer> unglückszahlen, int max, int zahlenraum){
         Random random = new Random();

@@ -79,7 +79,6 @@ public class DateiUtil {
 
 public void löscheAlleUnglückszahlen(){
     File file = new File(DATEI_PFAD);
-    List<Integer> unglückszahlen = ladeUnglückszahlen();
 
     if(file.exists()){
         try {

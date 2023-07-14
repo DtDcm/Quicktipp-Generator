@@ -63,7 +63,7 @@ public class LottoApplikation
             eingabe = "Eurojackpot";
             lotterie = new Eurojackpot();
         }
-        System.out.println(">> Sie haben " + eingabe + " ausgewählt.");
+        System.out.println(">> Sie haben " + lotterie.getLotterieName() + " ausgewählt.");
     }
 
     public boolean überprüfeLotterieEingabe(String eingabe) throws InputMismatchException{
@@ -160,8 +160,8 @@ public class LottoApplikation
                 catch (InputMismatchException e) {
                     System.out.println(e.getMessage());
                 }
-                
         }
+        
         if(!eingabe.isEmpty() && !eingabe.equalsIgnoreCase("Alle")){
             System.out.println(eingabe);
             for (String s : eingabe.split("\\s+")) {
