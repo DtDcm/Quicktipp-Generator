@@ -6,9 +6,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.*;
 
 public class DateiUtil {
     private final String DATEI_PFAD = "Unglückszahlen.txt";
+
+    private final String logFileName = "logfile.log";
+    private final Logger logger = Logger.getLogger("com.quicktipp");
+    private FileHandler fileHandler;
 
     public void speichereUnglückszahlen(List<Integer> unglückszahlen){
         File datei = new File(DATEI_PFAD);
@@ -48,50 +53,66 @@ public class DateiUtil {
     }
 
     public void löscheUnglückszahlen(List<Integer> zahlenZuLöschen){
-    File file = new File(DATEI_PFAD);
-    if(file.exists()){
-        try {
-            File datei = new File(DATEI_PFAD);
+        File file = new File(DATEI_PFAD);
+        if(file.exists()){
+            try {
+                File datei = new File(DATEI_PFAD);
 
-            List<Integer> zahlenInDatei = new ArrayList<>();
-            List<Integer> unglückszahlen = ladeUnglückszahlen();
+                List<Integer> zahlenInDatei = new ArrayList<>();
+                List<Integer> unglückszahlen = ladeUnglückszahlen();
 
-            for (Integer gespeicherteZahl : unglückszahlen) {
-                if (!zahlenZuLöschen.contains(gespeicherteZahl)) {
-                    zahlenInDatei.add(gespeicherteZahl);
+                for (Integer gespeicherteZahl : unglückszahlen) {
+                    if (!zahlenZuLöschen.contains(gespeicherteZahl)) {
+                        zahlenInDatei.add(gespeicherteZahl);
+                    }
                 }
+
+                FileWriter writer = new FileWriter(datei);
+
+                for (int zahl : zahlenInDatei) {
+                    writer.write(String.valueOf(zahl) + "\n");
+                }
+
+                writer.close();
+            } catch (IOException e) {
+
+            } catch (NumberFormatException e) {
+
             }
-
-            FileWriter writer = new FileWriter(datei);
-
-            for (int zahl : zahlenInDatei) {
-                writer.write(String.valueOf(zahl) + "\n");
-            }
-
-            writer.close();
-        } catch (IOException e) {
-
-        } catch (NumberFormatException e) {
-
         }
     }
-}
 
-public void löscheAlleUnglückszahlen(){
-    File file = new File(DATEI_PFAD);
+    public void löscheAlleUnglückszahlen(){
+        File file = new File(DATEI_PFAD);
 
-    if(file.exists()){
+        if(file.exists()){
+            try {
+                File datei = new File(DATEI_PFAD);
+                FileWriter writer = new FileWriter(datei);
+
+                writer.write("");
+                writer.close();
+            } catch (IOException e) {
+
+            } catch (NumberFormatException e) {
+
+            }
+        }
+    }
+
+    public void initialisiereLogger() {
         try {
-            File datei = new File(DATEI_PFAD);
-            FileWriter writer = new FileWriter(datei);
-
-            writer.write("");
-            writer.close();
-        } catch (IOException e) {
-
-        } catch (NumberFormatException e) {
-
+            fileHandler = new FileHandler(logFileName, true);
+            SimpleFormatter formatter = new SimpleFormatter();
+            fileHandler.setFormatter(formatter);
+            logger.addHandler(fileHandler);
+            logger.setUseParentHandlers(false);
+        } catch (SecurityException | IOException e) {
+            e.printStackTrace();
         }
     }
-}
+
+    public void logNachricht(String message) {
+        logger.log(Level.SEVERE, message + "\n");
+    }
 }

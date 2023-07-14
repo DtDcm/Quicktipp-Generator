@@ -149,8 +149,8 @@ public class LottoApplikationTest {
             List<Integer> erwarteteUnglückszahlen = List.of(3, 13, 24, 40, 1);
 
             app.handleZahlenEingabe(new Scanner(inputStream));
-            List<Integer> unglückszahlen = app.unglückszahlen;
-            Assertions.assertEquals(erwarteteUnglückszahlen, unglückszahlen);
+            List<Integer> tatsächlichUnglückszahlen = app.unglückszahlen;
+            Assertions.assertEquals(erwarteteUnglückszahlen, tatsächlichUnglückszahlen);
         }
 
         @ParameterizedTest
@@ -177,8 +177,8 @@ public class LottoApplikationTest {
             List<Integer> erwarteteUnglückszahlen = new ArrayList<>();
 
             app.handleZahlenEingabe(new Scanner(inputStream));
-            List<Integer> unglückszahlen = app.unglückszahlen;
-            Assertions.assertEquals(erwarteteUnglückszahlen, unglückszahlen);
+            List<Integer> tatsächlichUnglückszahlen = app.unglückszahlen;
+            Assertions.assertEquals(erwarteteUnglückszahlen, tatsächlichUnglückszahlen);
         }
     }
     
@@ -225,8 +225,8 @@ public class LottoApplikationTest {
             List<Integer> erwarteteUnglückszahlen = List.of(13, 24);
 
             app.handleLöschEingabe(new Scanner(inputStream));
-            List<Integer> unglückszahlen = app.unglückszahlen;
-            Assertions.assertEquals(erwarteteUnglückszahlen, unglückszahlen);
+            List<Integer> tatsächlichUnglückszahlen = app.unglückszahlen;
+            Assertions.assertEquals(erwarteteUnglückszahlen, tatsächlichUnglückszahlen);
         }
 
         @ParameterizedTest
@@ -241,8 +241,8 @@ public class LottoApplikationTest {
             List<Integer> erwarteteUnglückszahlen = new ArrayList<>();
 
             app.handleLöschEingabe(new Scanner(inputStream));
-            List<Integer> unglückszahlen = app.unglückszahlen;
-            Assertions.assertEquals(erwarteteUnglückszahlen, unglückszahlen);
+            List<Integer> tatsächlichUnglückszahlen = app.unglückszahlen;
+            Assertions.assertEquals(erwarteteUnglückszahlen, tatsächlichUnglückszahlen);
         }
 
         @ParameterizedTest
@@ -257,8 +257,8 @@ public class LottoApplikationTest {
             List<Integer> erwarteteUnglückszahlen = List.of(1, 3, 13, 24, 40);
 
             app.handleLöschEingabe(new Scanner(inputStream));
-            List<Integer> unglückszahlen = app.unglückszahlen;
-            Assertions.assertEquals(erwarteteUnglückszahlen, unglückszahlen);
+            List<Integer> tatsächlichUnglückszahlen = app.unglückszahlen;
+            Assertions.assertEquals(erwarteteUnglückszahlen, tatsächlichUnglückszahlen);
         }
     }
     
