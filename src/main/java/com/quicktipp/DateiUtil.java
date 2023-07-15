@@ -11,8 +11,8 @@ import java.util.logging.*;
 public class DateiUtil {
     private final String DATEI_PFAD = "Unglückszahlen.txt";
 
-    private final String logFileName = "logfile.log";
-    private final Logger logger = Logger.getLogger("com.quicktipp");
+    private final String LOGFILENAME = "logfile.log";
+    private final Logger LOGGER = Logger.getLogger("com.quicktipp");
     private FileHandler fileHandler;
 
     public void speichereUnglückszahlen(List<Integer> unglückszahlen){
@@ -102,17 +102,17 @@ public class DateiUtil {
 
     public void initialisiereLogger() {
         try {
-            fileHandler = new FileHandler(logFileName, true);
+            fileHandler = new FileHandler(LOGFILENAME, true);
             SimpleFormatter formatter = new SimpleFormatter();
             fileHandler.setFormatter(formatter);
-            logger.addHandler(fileHandler);
-            logger.setUseParentHandlers(false);
+            LOGGER.addHandler(fileHandler);
+            LOGGER.setUseParentHandlers(false);
         } catch (SecurityException | IOException e) {
             e.printStackTrace();
         }
     }
 
     public void logNachricht(String message) {
-        logger.log(Level.SEVERE, message + "\n");
+        LOGGER.log(Level.SEVERE, message + "\n");
     }
 }

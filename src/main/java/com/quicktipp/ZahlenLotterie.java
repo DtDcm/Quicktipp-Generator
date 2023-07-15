@@ -5,28 +5,31 @@ import java.util.List;
 import java.util.Random;
 
 public abstract class ZahlenLotterie implements TippreihenGenerator {
+    List<Integer> tippZahlen;
+    int zahlenraum;
 
-    List<Integer> zahlen;
-
-    public abstract void generiereTippreihe(List<Integer> unglückszahlen);
-    
-    public abstract boolean istGültigeZahl(int zahl);
-    
-    public abstract String getLotterieName();
-
-    public List<Integer> generiereZahlen(List<Integer> unglückszahlen, int max, int zahlenraum){
+    public List<Integer> generiereZahlen(List<Integer> unglückszahlen, int max, int zahlenraum) throws IllegalStateException{
         Random random = new Random();
-        List<Integer> zahlen = new ArrayList<>();
+        List<Integer> generierteTippZahlen = new ArrayList<>();
 
-        while (zahlen.size() < max) {
+        if(unglückszahlen.size() > getZahlenraum() - getAnzahlTippZahlen()){
+            throw new IllegalStateException("Ein interner Fehler ist aufgetreten: Es sind schon zu viele Unglückzahlen.");
+        }
+
+        while (generierteTippZahlen.size() < max) {
             int zufallszahl = random.nextInt(zahlenraum) + 1;
-            if (!zahlen.contains(zufallszahl) && !unglückszahlen.contains(zufallszahl)) {
-                zahlen.add(zufallszahl);
+            if (!generierteTippZahlen.contains(zufallszahl) && !unglückszahlen.contains(zufallszahl)) {
+                generierteTippZahlen.add(zufallszahl);
             }
         }
 
-        zahlen.sort(null);
+        generierteTippZahlen.sort(null);
 
-        return zahlen;
+        return generierteTippZahlen;
+    }
+
+    @Override
+    public int getZahlenraum() {
+        return zahlenraum;
     }
 }

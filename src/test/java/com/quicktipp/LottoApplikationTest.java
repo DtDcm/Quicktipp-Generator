@@ -32,20 +32,27 @@ public class LottoApplikationTest {
     @Nested
     class ÜberprüfeLotterieEingabeTests {
         @ParameterizedTest
-        @ValueSource(strings = {"Lotto", "lotto", "LOTTO", "  lotto  ", "Eurojackpot", "eurojackpot", "EUROJACKPOT", "  Eurojackpot  ", "", "    " })
-        public void validEingabe(String eingabe) {
-            boolean result = app.überprüfeLotterieEingabe(eingabe.trim());
-            Assertions.assertTrue(result);
+        @ValueSource(strings = {"Lotto", "lotto", "LOTTO", "  lotto  ", "", "    " })
+        public void validEingabeLotto(String eingabe) {
+            app.überprüfeLotterieEingabe(eingabe.trim());
+            assertTrue(app.lotterie instanceof Lotto);
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"123", "invalid", "Latte", "a", "  a  ", "!@#$%", "Lotto!", "Eurojackpot."})
+        @ValueSource(strings = {"Eurojackpot", "eurojackpot", "EUROJACKPOT", "  Eurojackpot  "})
+        public void validEingabeEurojackpot(String eingabe) {
+            app.überprüfeLotterieEingabe(eingabe.trim());
+            assertTrue(app.lotterie instanceof Eurojackpot);
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"123", "invalid", "Latte", "a", "!@#$%", "Lotto!", "Eurojackpot."})
         public void invalidEingabe(String eingabe) {
             try {
                 app.überprüfeLotterieEingabe(eingabe.trim());
                 Assertions.fail("Expected InputMismatchException to be thrown.");
             } catch (InputMismatchException e) {
-                Assertions.assertEquals(">> Inkorrekte Eingabe. Bitte geben Sie entweder Lotto oder Eurojackpot an.", e.getMessage());
+                Assertions.assertEquals(">> Inkorrekte Eingabe. Bitte geben Sie entweder 'Lotto' oder 'Eurojackpot' an.", e.getMessage());
             }
         }
     }
@@ -76,7 +83,7 @@ public class LottoApplikationTest {
     @Nested
     class ÜberprüfeZahlenEingabeTests {
         @ParameterizedTest
-        @ValueSource(strings = {"1", "1 2", "1 2 3", "1 2 3 4 5 6", "49", "  1  "})
+        @ValueSource(strings = {"1", "1 2", "1 2 3", "1 2 3 4 5 6", "49", "  1  ", "1  2 33  14 5  46", "1 1 1 1"})
         public void validZahlEingabeLotto(String eingabe) {
             app.lotterie = new Lotto();
             boolean result = app.überprüfeZahlenEingabe(eingabe.trim());
@@ -84,7 +91,7 @@ public class LottoApplikationTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"1", "1 2", "1 2 3", "1 2 3 4 5 6", "50", "  1  "})
+        @ValueSource(strings = {"1", "1 2", "1 2 3", "1 2 3 4 5 6", "50", "  1  ", "1  2 33  14 5  46", "1 1 1 1"})
         public void validZahlEingabeEuroJackpot(String eingabe) {
             app.lotterie = new Eurojackpot();
             boolean result = app.überprüfeZahlenEingabe(eingabe.trim());
@@ -92,7 +99,7 @@ public class LottoApplikationTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"invalid", "Latte", "a", "  a  ", "!@#$%", "Lotto!", "Eurojackpot."})
+        @ValueSource(strings = {"invalid", "Latte", "a", "!@#$%", "Lotto!", "Eurojackpot.", "1.23", "1,23"})
         public void invalidZahlEingabe(String eingabe) {
             app.lotterie = new Lotto();
             Assertions.assertThrows(NumberFormatException.class, () -> {
@@ -101,26 +108,26 @@ public class LottoApplikationTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"50", "-1", "1 23 49 50"})
+        @ValueSource(strings = {"50", "-1", "1 23 49 50", "0"})
         public void invalidZahlenraumEingabeLotto(String eingabe) {
             app.lotterie = new Lotto();
             try {
                 app.überprüfeZahlenEingabe(eingabe.trim());
                 Assertions.fail("Expected InputMismatchException to be thrown.");
             } catch (InputMismatchException e) {
-                Assertions.assertEquals(">> Inkorrekte Eingabe. Es gibt Zahlen, die nicht im korrekten Zahlenraum liegen.", e.getMessage());
+                Assertions.assertEquals(">> Inkorrekte Eingabe. Die Zahlen bei Lotto dürfen nur zwischen 1 und 49.", e.getMessage());
             }
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"51", "-1", "1 23 49 51"})
+        @ValueSource(strings = {"51", "-1", "1 23 49 51", "0"})
         public void invalidZahlenraumFalscherEurojackpot(String eingabe) {
             app.lotterie = new Eurojackpot();
             try {
                 app.überprüfeZahlenEingabe(eingabe.trim());
                 Assertions.fail("Expected InputMismatchException to be thrown.");
             } catch (InputMismatchException e) {
-                Assertions.assertEquals(">> Inkorrekte Eingabe. Es gibt Zahlen, die nicht im korrekten Zahlenraum liegen.", e.getMessage());
+                Assertions.assertEquals(">> Inkorrekte Eingabe. Die Zahlen bei Eurojackpot dürfen nur zwischen 1 und 50.", e.getMessage());
             }
         }
 
@@ -135,18 +142,101 @@ public class LottoApplikationTest {
                 Assertions.assertEquals(">> Inkorrekte Eingabe. Sie können nur bis zu 6 Zahlen eingeben.", e.getMessage());
             }
         }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"44 45 46 47 48 49"})
+        public void validAnzahlGespeicherterUnglückszahlenLotto(String eingabe) {
+            app.lotterie = new Lotto();
+            for(int i = 1; i<=37; i++){
+                app.unglückszahlen.add(i);
+            }
+            boolean result = app.überprüfeZahlenEingabe(eingabe.trim());
+            Assertions.assertTrue(result);
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"44", "44 45 46 47 48 49"})
+        public void invalidAnzahlGespeicherterUnglückszahlenLotto(String eingabe) {
+            app.lotterie = new Lotto();
+            for(int i = 1; i<=43; i++){
+                app.unglückszahlen.add(i);
+            }
+            try {
+                app.überprüfeZahlenEingabe(eingabe.trim());
+                Assertions.fail("Expected IllegalStateException to be thrown.");
+            } catch (IllegalStateException e) {
+                Assertions.assertEquals("Es sind schon zu viele Unglückzahlen gespeichert. Bitte Löschen die Unglückzahlen, die Sie nicht mehr verwenden wollen.", e.getMessage());
+            }
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"44 45 46 47 48 49"})
+        public void invalidAnzahlGespeicherterUnglückszahlenGrenzeLotto(String eingabe) {
+            app.lotterie = new Lotto();
+            for(int i = 1; i<=38; i++){
+                app.unglückszahlen.add(i);
+            }
+            try {
+                app.überprüfeZahlenEingabe(eingabe.trim());
+                Assertions.fail("Expected IllegalStateException to be thrown.");
+            } catch (IllegalStateException e) {
+                Assertions.assertEquals("Es sind schon zu viele Unglückzahlen gespeichert. Bitte Löschen die Unglückzahlen, die Sie nicht mehr verwenden wollen.", e.getMessage());
+            }
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"46 47 48 49 50"})
+        public void validAnzahlGespeicherterUnglückszahlenEurojackpot(String eingabe) {
+            app.lotterie = new Eurojackpot();
+            for(int i = 1; i<=40; i++){
+                app.unglückszahlen.add(i);
+            }
+            boolean result = app.überprüfeZahlenEingabe(eingabe.trim());
+            Assertions.assertTrue(result);
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"46", "46 47 48 49 50"})
+        public void invalidAnzahlGespeicherterUnglückszahlen(String eingabe) {
+            app.lotterie = new Eurojackpot();
+            for(int i = 1; i<=45; i++){
+                app.unglückszahlen.add(i);
+            }
+            try {
+                app.überprüfeZahlenEingabe(eingabe.trim());
+                Assertions.fail("Expected IllegalStateException to be thrown.");
+            } catch (IllegalStateException e) {
+                Assertions.assertEquals("Es sind schon zu viele Unglückzahlen gespeichert. Bitte Löschen die Unglückzahlen, die Sie nicht mehr verwenden wollen.", e.getMessage());
+            }
+        }
+
+
+        @ParameterizedTest
+        @ValueSource(strings = {"46 47 48 49 50"})
+        public void invalidAnzahlGespeicherterUnglückszahlenGrenze(String eingabe) {
+            app.lotterie = new Eurojackpot();
+            for(int i = 1; i<=41; i++){
+                app.unglückszahlen.add(i);
+            }
+            try {
+                app.überprüfeZahlenEingabe(eingabe.trim());
+                Assertions.fail("Expected IllegalStateException to be thrown.");
+            } catch (IllegalStateException e) {
+                Assertions.assertEquals("Es sind schon zu viele Unglückzahlen gespeichert. Bitte Löschen die Unglückzahlen, die Sie nicht mehr verwenden wollen.", e.getMessage());
+            }
+        }
     }
     
     @Nested
     class HandleZahlenEingabeTests {
         @ParameterizedTest
-        @ValueSource(strings = {"3 13 24 40 1\n"})
+        @ValueSource(strings = {"3 49 24 40 1\n"})
         public void validZahlEingabeLotto(String eingabe) {
             app.lotterie = new Lotto();
             String input = eingabe;
             inputStream = new ByteArrayInputStream(input.getBytes());
             
-            List<Integer> erwarteteUnglückszahlen = List.of(3, 13, 24, 40, 1);
+            List<Integer> erwarteteUnglückszahlen = List.of(3, 49, 24, 40, 1);
 
             app.handleZahlenEingabe(new Scanner(inputStream));
             List<Integer> tatsächlichUnglückszahlen = app.unglückszahlen;
@@ -154,13 +244,13 @@ public class LottoApplikationTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"3 13 24 40 1\n"})
+        @ValueSource(strings = {"3 50 24 40 1\n"})
         public void validZahlEingabeEurojackpot(String eingabe) {
-            app.lotterie = new Lotto();
+            app.lotterie = new Eurojackpot();
             String input = eingabe;
             inputStream = new ByteArrayInputStream(input.getBytes());
 
-            List<Integer> erwarteteUnglückszahlen = List.of(3, 13, 24, 40, 1);
+            List<Integer> erwarteteUnglückszahlen = List.of(3, 50, 24, 40, 1);
 
             app.handleZahlenEingabe(new Scanner(inputStream));
             List<Integer> unglückszahlen = app.unglückszahlen;
@@ -168,7 +258,7 @@ public class LottoApplikationTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"\n"})
+        @ValueSource(strings = {"\n", "    \n"})
         public void validLeereEingabe(String eingabe) {
             app.lotterie = new Lotto();
             String input = eingabe;
@@ -185,14 +275,14 @@ public class LottoApplikationTest {
     @Nested
     class ÜberprüfeLöschEingabeTests {
         @ParameterizedTest
-        @ValueSource(strings = {"1", "1 2", "1 2 3", "1 2 3 4 5 6", "50", "  1  "})
+        @ValueSource(strings = {"1", "1 2", "1 2 3", "1 2 3 4 5 6", "1 2 3 4 5 6 7 8 9 10", "50", "  1  ", "1  2 33  14 5  46", "1 1 1 1"})
         public void validZahlenEingabe(String eingabe) {
             boolean result = app.überprüfeLöschEingabe(eingabe.trim());
             Assertions.assertTrue(result);
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"invalid", "Latte", "a", "  a  ", "!@#$%", "Lotto!", "Eurojackpot."})
+        @ValueSource(strings = {"invalid", "Latte", "a", "  a  ", "!@#$%", "Lotto!", "Eurojackpot.", "1.23", "1,23"})
         public void invalidZahlenEingabe(String eingabe) {
             Assertions.assertThrows(NumberFormatException.class, () -> {
                 app.überprüfeLöschEingabe(eingabe.trim());
@@ -214,7 +304,7 @@ public class LottoApplikationTest {
     @Nested
     class HandleLöschEingabeTests {
         @ParameterizedTest
-        @ValueSource(strings = {"3 40 1\n"})
+        @ValueSource(strings = {"3 40 1\n", "3 40  1\n"})
         public void validLöschEingabe(String eingabe) {
             String input = eingabe;
             inputStream = new ByteArrayInputStream(input.getBytes());

@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -21,13 +23,29 @@ public class EurojackpotTest {
          eurojackpot = new Eurojackpot();
     }
 
+    @Nested
+    class istGültigeZahlTest {
+        @ParameterizedTest
+        @ValueSource(ints = {1, 49, 10, 23})
+        public void validZahl(int zahl) {
+            assertTrue(eurojackpot.istGültigeZahl(zahl));
+        }
+
+        @ParameterizedTest
+        @ValueSource(ints = {0, -1, 51})
+        public void invalidZahl(int zahl) {
+            assertFalse(eurojackpot.istGültigeZahl(zahl));
+        }
+    }
+
     @Test
     public void generiereTippreiheTest() {
         
-        List<Integer> unglückszahlen = Arrays.asList(13, 24, 37);
+        List<Integer> unglückszahlen = Arrays.asList(1, 5, 13, 24, 37, 45);
+
         
         eurojackpot.generiereTippreihe(unglückszahlen);
-        List<Integer> generierteZahlen = eurojackpot.zahlen;
+        List<Integer> generierteZahlen = eurojackpot.tippZahlen;
         List<Integer> generierteEuroZahlen = eurojackpot.euroZahlen;
 
         assertEquals(5, generierteZahlen.size());
@@ -45,20 +63,8 @@ public class EurojackpotTest {
         
         Set<Integer> eindeutigeEuroZahlen = new HashSet<>(generierteEuroZahlen);
         assertEquals(2, eindeutigeEuroZahlen.size());
-    }
 
-    @Nested
-    class istGültigeZahlTest {
-        @ParameterizedTest
-        @ValueSource(ints = {1, 49, 10, 23})
-        public void validZahl(int zahl) {
-            assertTrue(eurojackpot.istGültigeZahl(zahl));
-        }
-
-        @ParameterizedTest
-        @ValueSource(ints = {0, -1, 51})
-        public void invalidZahl(int zahl) {
-            assertFalse(eurojackpot.istGültigeZahl(zahl));
-        }
+        assertTrue(!generierteZahlen.containsAll(unglückszahlen));
+        assertTrue(!generierteEuroZahlen.containsAll(unglückszahlen));
     }
 }

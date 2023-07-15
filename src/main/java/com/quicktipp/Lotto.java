@@ -5,20 +5,32 @@ import java.util.List;
 
 public class Lotto extends ZahlenLotterie{
 
-    public void generiereTippreihe(List<Integer> unglückszahlen){
-        
-        zahlen = generiereZahlen(unglückszahlen, 6, 49);
+    Lotto(){
+        zahlenraum = 49;
+    }
 
-        System.out.println(">> Quick-Tipp: " + Arrays.toString(zahlen.toArray()));
+    public void generiereTippreihe(List<Integer> unglückszahlen) {
+        try {
+            tippZahlen = generiereZahlen(unglückszahlen, 6, zahlenraum);
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
+        }
+
+        System.out.println(">> Quick-Tipp: " + Arrays.toString(tippZahlen.toArray()));
     }
 
     @Override
     public boolean istGültigeZahl(int zahl) {
-        return (zahl > 0 && zahl <= 49);
+        return (zahl > 0 && zahl <= zahlenraum);
     }
 
     @Override
     public String getLotterieName() {
         return "Lotto";
+    }
+
+    @Override
+    public int getAnzahlTippZahlen() {
+        return 6;
     }
 }

@@ -7,4 +7,6 @@ public interface TippreihenGenerator {
     void generiereTippreihe(List<Integer> unglückszahlen);
     boolean istGültigeZahl(int zahl);
     String getLotterieName();
+    int getZahlenraum();
+    int getAnzahlTippZahlen();
 }
