@@ -42,7 +42,7 @@ public class LottoTest {
         List<Integer> unglückszahlen = Arrays.asList(1, 5, 13, 24, 37, 45);
         
         lotto.generiereTippreihe(unglückszahlen);
-        List<Integer> generierteZahlen = lotto.tippZahlen;
+        List<Integer> generierteZahlen = lotto.getTippzahlen();
 
         assertEquals(6, generierteZahlen.size());
         

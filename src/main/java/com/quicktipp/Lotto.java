@@ -1,36 +1,81 @@
 package com.quicktipp;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Die Klasse Lotto implementiert die Generierung von Tippreihen für die Lotterie "Lotto".
+ */
 public class Lotto extends ZahlenLotterie{
+    private static final int ANZAHL_TIPP_ZAHLEN = 6;
+    private static final int ZAHLENRAUM = 49;
+    private List<Integer> tippzahlen = new ArrayList<>();
 
-    Lotto(){
-        zahlenraum = 49;
-    }
-
+    /**
+    * Die Methode generiert eine Tippreihe für die Lotterie "Lotto" unter Berücksichtigung von Unglückszahlen.
+    * Nachdem die Tippzahlen erfolgreich generiert wurden, werden sie in der Konsole ausgegeben.
+    * 
+    * @param unglückszahlen Die Liste der Unglückszahlen, die ausgeschlossen werden sollen.
+    */
     public void generiereTippreihe(List<Integer> unglückszahlen) {
         try {
-            tippZahlen = generiereZahlen(unglückszahlen, 6, zahlenraum);
+            tippzahlen = generiereZahlen(unglückszahlen, getAnzahlTippzahlen());
         } catch (IllegalStateException e) {
             System.out.println(e.getMessage());
+            return;
         }
 
-        System.out.println(">> Quick-Tipp: " + Arrays.toString(tippZahlen.toArray()));
+        System.out.println(">> Quick-Tipp: " + Arrays.toString(tippzahlen.toArray()));
     }
 
+    /**
+    * Die Methode überprüft, ob eine gegebene Zahl gültig ist für die Lotterie "Lotto".
+    * 
+    * @param zahl Die zu überprüfende Zahl.
+    * @return true, wenn die Zahl gültig ist, ansonsten false.
+    */
     @Override
     public boolean istGültigeZahl(int zahl) {
-        return (zahl > 0 && zahl <= zahlenraum);
+        return (zahl > 0 && zahl <= getZahlenraum());
     }
 
+    /**
+    * Die Methode gibt den Lotterienamen "Lotto" zurück.
+    * 
+    * @return "Lotto"
+    */
     @Override
     public String getLotterieName() {
         return "Lotto";
     }
 
+    /**
+    * Die Methode gibt die Anzahl der Tippzahlen zurück.
+    * 
+    * @return ANZAHL_TIPP_ZAHLEN
+    */
     @Override
-    public int getAnzahlTippZahlen() {
-        return 6;
+    public int getAnzahlTippzahlen() {
+        return ANZAHL_TIPP_ZAHLEN;
+    }
+
+    /**
+    * Die Methode gibt den Zahlenraum zurück.
+    * 
+    * @return ZAHLENRAUM
+    */
+    @Override
+    public int getZahlenraum() {
+        return ZAHLENRAUM;
+    }
+
+    /**
+    * Die Methode gibt die Tippzahlen zurück.
+    * 
+    * @return tippzahlen
+    */
+    public List<Integer> getTippzahlen() {
+        return tippzahlen;
     }
 }

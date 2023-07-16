@@ -10,17 +10,18 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class DateiUtilTest {
-    private final String TEST_DATEI_PFAD = "TestUnglückszahlen.txt";
+    private String testDateiPfad = "TestUnglückszahlen.txt";;
     private DateiUtil dateiUtil;
 
     @Before
     public void setUp() {
         dateiUtil = new DateiUtil();
+        dateiUtil.setDateiPfad(testDateiPfad); 
     }
 
     @After
     public void tearDown() {
-        File testDatei = new File(TEST_DATEI_PFAD);
+        File testDatei = new File(testDateiPfad);
         if (testDatei.exists()) {
             testDatei.delete();
         }
