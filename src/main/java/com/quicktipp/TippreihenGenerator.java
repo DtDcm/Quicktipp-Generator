@@ -9,7 +9,7 @@ import java.util.List;
 * die Überprüfung, ob eine Zahl gültig ist, das Abrufen des Namens der Lotterie und der Anzahl der Tippzahlen.
 */
 public interface TippreihenGenerator {
-    List<Integer> generiereZahlen(List<Integer> unglückszahlen, int max);
+    List<Integer> generiereZahlen(List<Integer> unglückszahlen, int max, int zahlenraum);
     void generiereTippreihe(List<Integer> unglückszahlen);
     boolean istGültigeZahl(int zahl);
     String getLotterieName();

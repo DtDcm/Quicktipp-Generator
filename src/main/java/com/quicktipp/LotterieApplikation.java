@@ -10,7 +10,7 @@ import java.util.Scanner;
  * Sie ermöglicht es dem Benutzer, zwischen den Lotterien "Lotto" und "Eurojackpot" zu wählen und Unglückszahlen
  * festzulegen, die bei der Generierung von Tippreihen ausgeschlossen werden sollen.
  */
-public class LottoApplikation 
+public class LotterieApplikation 
 {
     public ZahlenLotterie lotterie;
     public List<Integer> unglückszahlen = new ArrayList<Integer>();
@@ -19,7 +19,7 @@ public class LottoApplikation
     
     public static void main(String[] args)
     {
-        LottoApplikation app = new LottoApplikation();
+        LotterieApplikation app = new LotterieApplikation();
         app.start();
     }
 

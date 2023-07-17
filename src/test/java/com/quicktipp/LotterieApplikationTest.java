@@ -12,14 +12,14 @@ import java.util.List;
 import java.util.Scanner;
 import static org.junit.Assert.*;
 
-public class LottoApplikationTest {
+public class LotterieApplikationTest {
     
-    LottoApplikation app;
+    LotterieApplikation app;
     DateiUtil dateiUtil;
 
     @BeforeEach
     public void setUp() {
-        app = new LottoApplikation();
+        app = new LotterieApplikation();
         dateiUtil = new DateiUtil();
     }
 

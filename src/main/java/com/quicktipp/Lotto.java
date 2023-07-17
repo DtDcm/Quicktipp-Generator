@@ -20,7 +20,7 @@ public class Lotto extends ZahlenLotterie{
     */
     public void generiereTippreihe(List<Integer> unglückszahlen) {
         try {
-            tippzahlen = generiereZahlen(unglückszahlen, getAnzahlTippzahlen());
+            tippzahlen = generiereZahlen(unglückszahlen, ANZAHL_TIPP_ZAHLEN, ZAHLENRAUM);
         } catch (IllegalStateException e) {
             System.out.println(e.getMessage());
             return;
@@ -37,7 +37,7 @@ public class Lotto extends ZahlenLotterie{
     */
     @Override
     public boolean istGültigeZahl(int zahl) {
-        return (zahl > 0 && zahl <= getZahlenraum());
+        return (zahl > 0 && zahl <= ZAHLENRAUM);
     }
 
     /**

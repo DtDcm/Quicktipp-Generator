@@ -10,6 +10,7 @@ import java.util.List;
 public class Eurojackpot extends ZahlenLotterie {
     private final int ANZAHL_TIPP_ZAHLEN = 5;
     private final int ZAHLENRAUM = 50;
+    private final int EURO_ZAHLENRAUM = 10;
     private List<Integer> tippzahlen = new ArrayList<>();
     private List<Integer> eurozahlen = new ArrayList<>();
 
@@ -21,8 +22,8 @@ public class Eurojackpot extends ZahlenLotterie {
     */
     public void generiereTippreihe(List<Integer> unglückszahlen) {
         try {
-            tippzahlen = generiereZahlen(unglückszahlen, getAnzahlTippzahlen());
-            eurozahlen = generiereZahlen(unglückszahlen, 2);
+            tippzahlen = generiereZahlen(unglückszahlen, ANZAHL_TIPP_ZAHLEN, ZAHLENRAUM);
+            eurozahlen = generiereZahlen(unglückszahlen, 2, EURO_ZAHLENRAUM);
         } catch (IllegalStateException e) {
             System.out.println(e.getMessage());
             return;
@@ -39,7 +40,17 @@ public class Eurojackpot extends ZahlenLotterie {
     */
     @Override
     public boolean istGültigeZahl(int zahl) {
-        return (zahl > 0 && zahl <= getZahlenraum());
+        return (zahl > 0 && zahl <= ZAHLENRAUM);
+    }
+
+    /**
+    * Die Methode überprüft, ob eine gegebene Zahl eine gültige Eurozahl ist für die Lotterie "Eurojackpot".
+    * 
+    * @param zahl Die zu überprüfende Zahl.
+    * @return true, wenn die Zahl gültig ist, ansonsten false.
+    */
+    public boolean istGültigeEurozahl(int zahl) {
+        return (zahl > 0 && zahl <= EURO_ZAHLENRAUM);
     }
 
     /**

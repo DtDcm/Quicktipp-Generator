@@ -54,7 +54,7 @@ public class EurojackpotTest {
             assertTrue(eurojackpot.istGültigeZahl(zahl));
         }
         for (int zahl : generierteEuroZahlen) {
-            assertTrue(eurojackpot.istGültigeZahl(zahl));
+            assertTrue(eurojackpot.istGültigeEurozahl(zahl));
         }
 
         Set<Integer> eindeutigeZahlen = new HashSet<>(generierteZahlen);
