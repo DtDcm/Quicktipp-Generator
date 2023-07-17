@@ -41,7 +41,7 @@ public class DateiUtil {
             writer.close();
             
         } catch (IOException e) {
-            System.out.println("Ein Fehler");
+            System.out.println("Ein interner Fehler ist aufgetreten: Es ist ein Problem beim Schreiben in die Datei aufgetreten.");
         }
     }
     /**
@@ -65,7 +65,7 @@ public class DateiUtil {
                 }
                 scanner.close();
             } catch (IOException e) {
-                System.out.println("Ein Fehler");
+                System.out.println("Ein interner Fehler ist aufgetreten: Es ist ein Problem beim Lesen der Datei aufgetreten.");
             }
         }
         return geladeneUnglückszahlen;
@@ -102,9 +102,7 @@ public class DateiUtil {
 
                 writer.close();
             } catch (IOException e) {
-
-            } catch (NumberFormatException e) {
-
+                System.out.println("Ein interner Fehler ist aufgetreten: Es ist ein Problem beim Schreiben in die Datei aufgetreten.");
             }
         }
     }
@@ -123,25 +121,24 @@ public class DateiUtil {
                 writer.write("");
                 writer.close();
             } catch (IOException e) {
-
-            } catch (NumberFormatException e) {
-
+                System.out.println("Ein interner Fehler ist aufgetreten: Es ist ein Problem beim Schreiben in die Datei aufgetreten.");
             }
         }
     }
 
     /**
-    * Die Methode initialisiert den Logger für die Anwendung.  
+    * Die Methode initialisiert den Logger für die Anwendung.
+    * Die Log-Nachrichten werden im Append-Modus in die Log-Datei geschrieben.
     */    
     public void initialisiereLogger() {
         try {
-            fileHandler = new FileHandler(LOGFILENAME, true);
+            fileHandler = new FileHandler(LOGFILENAME, true); 
             SimpleFormatter formatter = new SimpleFormatter();
             fileHandler.setFormatter(formatter);
             LOGGER.addHandler(fileHandler);
-            LOGGER.setUseParentHandlers(false);
+            LOGGER.setUseParentHandlers(false); //Verhindert das Lognachricht in der Konsole ausgegeben wird
         } catch (SecurityException | IOException e) {
-            e.printStackTrace();
+            System.out.println("Ein interner Fehler ist aufgetreten:: Es ist ein Problem beim Initialisieren des Loggers aufgetreten.");
         }
     }
 

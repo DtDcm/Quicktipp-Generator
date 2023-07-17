@@ -50,7 +50,6 @@ public class LottoApplikation
 
                 istNeueTippreihe = handleAntwortEingabe(scanner);
             }
-        
         scanner.close();
     }
 

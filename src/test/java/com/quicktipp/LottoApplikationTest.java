@@ -5,8 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.InputMismatchException;
@@ -18,15 +16,11 @@ public class LottoApplikationTest {
     
     LottoApplikation app;
     DateiUtil dateiUtil;
-    InputStream inputStream;
 
     @BeforeEach
     public void setUp() {
         app = new LottoApplikation();
         dateiUtil = new DateiUtil();
-        String input = "";
-        inputStream = new ByteArrayInputStream(input.getBytes());
-        
     }
 
     @Nested
@@ -62,20 +56,14 @@ public class LottoApplikationTest {
         @ParameterizedTest
         @ValueSource(strings = {"Lotto\n", "lotto\n", "LOTTO\n", "  lotto  \n", "\n", "    \n" })
         public void lottoEingabe(String eingabe) {
-            String input = eingabe;
-            inputStream = new ByteArrayInputStream(input.getBytes());
-
-            app.handleLotterieEingabe(new Scanner(inputStream));
+            app.handleLotterieEingabe(new Scanner(eingabe));
             assertTrue(app.lotterie instanceof Lotto);
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"Eurojackpot\n", "eurojackpot\n", "EUROJACKPOT\n", "  Eurojackpot  \n" })
+        @ValueSource(strings = {"Eurojackpot\n", "eurojackpot\n", "EUROJACKPOT\n", "  Eurojackpot  \n", "EUROJACKPOT\n" })
         public void eurojackpotEingabe(String eingabe) {
-            String input = eingabe;
-            inputStream = new ByteArrayInputStream(input.getBytes());
-
-            app.handleLotterieEingabe(new Scanner(inputStream));
+            app.handleLotterieEingabe(new Scanner(eingabe));
             assertTrue(app.lotterie instanceof Eurojackpot);
         }
     }
@@ -233,12 +221,12 @@ public class LottoApplikationTest {
         @ValueSource(strings = {"3 49 24 40 1\n"})
         public void validZahlEingabeLotto(String eingabe) {
             app.lotterie = new Lotto();
-            String input = eingabe;
-            inputStream = new ByteArrayInputStream(input.getBytes());
+            
+            
             
             List<Integer> erwarteteUnglückszahlen = List.of(3, 49, 24, 40, 1);
 
-            app.handleZahlenEingabe(new Scanner(inputStream));
+            app.handleZahlenEingabe(new Scanner(eingabe));
             List<Integer> tatsächlichUnglückszahlen = app.unglückszahlen;
             Assertions.assertEquals(erwarteteUnglückszahlen, tatsächlichUnglückszahlen);
         }
@@ -247,12 +235,12 @@ public class LottoApplikationTest {
         @ValueSource(strings = {"3 50 24 40 1\n"})
         public void validZahlEingabeEurojackpot(String eingabe) {
             app.lotterie = new Eurojackpot();
-            String input = eingabe;
-            inputStream = new ByteArrayInputStream(input.getBytes());
+            
+            
 
             List<Integer> erwarteteUnglückszahlen = List.of(3, 50, 24, 40, 1);
 
-            app.handleZahlenEingabe(new Scanner(inputStream));
+            app.handleZahlenEingabe(new Scanner(eingabe));
             List<Integer> unglückszahlen = app.unglückszahlen;
             Assertions.assertEquals(erwarteteUnglückszahlen, unglückszahlen);
         }
@@ -261,12 +249,12 @@ public class LottoApplikationTest {
         @ValueSource(strings = {"\n", "    \n"})
         public void validLeereEingabe(String eingabe) {
             app.lotterie = new Lotto();
-            String input = eingabe;
-            inputStream = new ByteArrayInputStream(input.getBytes());
+            
+            
 
             List<Integer> erwarteteUnglückszahlen = new ArrayList<>();
 
-            app.handleZahlenEingabe(new Scanner(inputStream));
+            app.handleZahlenEingabe(new Scanner(eingabe));
             List<Integer> tatsächlichUnglückszahlen = app.unglückszahlen;
             Assertions.assertEquals(erwarteteUnglückszahlen, tatsächlichUnglückszahlen);
         }
@@ -306,15 +294,15 @@ public class LottoApplikationTest {
         @ParameterizedTest
         @ValueSource(strings = {"3 40 1\n", "3 40  1\n"})
         public void validLöschEingabe(String eingabe) {
-            String input = eingabe;
-            inputStream = new ByteArrayInputStream(input.getBytes());
+            
+            
             
             dateiUtil.löscheAlleUnglückszahlen();
             dateiUtil.speichereUnglückszahlen(Arrays.asList(3, 13, 24, 40, 1));
 
             List<Integer> erwarteteUnglückszahlen = List.of(13, 24);
 
-            app.handleLöschEingabe(new Scanner(inputStream));
+            app.handleLöschEingabe(new Scanner(eingabe));
             List<Integer> tatsächlichUnglückszahlen = app.unglückszahlen;
             Assertions.assertEquals(erwarteteUnglückszahlen, tatsächlichUnglückszahlen);
         }
@@ -322,15 +310,15 @@ public class LottoApplikationTest {
         @ParameterizedTest
         @ValueSource(strings = {"Alle\n", "alle\n", "ALLE\n", "  alle\n  "})
         public void validLöschEingabeAlle(String eingabe) {
-            String input = eingabe;
-            inputStream = new ByteArrayInputStream(input.getBytes());
+            
+            
             
             dateiUtil.löscheAlleUnglückszahlen();
             dateiUtil.speichereUnglückszahlen(Arrays.asList(3, 13, 24, 40, 1));
 
             List<Integer> erwarteteUnglückszahlen = new ArrayList<>();
 
-            app.handleLöschEingabe(new Scanner(inputStream));
+            app.handleLöschEingabe(new Scanner(eingabe));
             List<Integer> tatsächlichUnglückszahlen = app.unglückszahlen;
             Assertions.assertEquals(erwarteteUnglückszahlen, tatsächlichUnglückszahlen);
         }
@@ -338,15 +326,15 @@ public class LottoApplikationTest {
         @ParameterizedTest
         @ValueSource(strings = {"\n", "   \n"})
         public void validLöschEingabeLeer(String eingabe) {
-            String input = eingabe;
-            inputStream = new ByteArrayInputStream(input.getBytes());
+            
+            
             
             dateiUtil.löscheAlleUnglückszahlen();
             dateiUtil.speichereUnglückszahlen(Arrays.asList(3, 13, 24, 40, 1));
 
             List<Integer> erwarteteUnglückszahlen = List.of(1, 3, 13, 24, 40);
 
-            app.handleLöschEingabe(new Scanner(inputStream));
+            app.handleLöschEingabe(new Scanner(eingabe));
             List<Integer> tatsächlichUnglückszahlen = app.unglückszahlen;
             Assertions.assertEquals(erwarteteUnglückszahlen, tatsächlichUnglückszahlen);
         }
@@ -378,20 +366,20 @@ public class LottoApplikationTest {
         @ParameterizedTest
         @ValueSource(strings = {"Ja\n"})
         public void validEingabeJa(String eingabe) {
-            String input = eingabe;
-            inputStream = new ByteArrayInputStream(input.getBytes());
+            
+            
             
 
-            Assertions.assertEquals("ja", app.handleAntwortEingabe(new Scanner(inputStream)));
+            Assertions.assertEquals("ja", app.handleAntwortEingabe(new Scanner(eingabe)));
         }
         @ParameterizedTest
         @ValueSource(strings = {"Nein\n"})
         public void validEingabeNein(String eingabe) {
-            String input = eingabe;
-            inputStream = new ByteArrayInputStream(input.getBytes());
+            
+            
             
 
-            Assertions.assertEquals("nein", app.handleAntwortEingabe(new Scanner(inputStream)));
+            Assertions.assertEquals("nein", app.handleAntwortEingabe(new Scanner(eingabe)));
         }
     }
 }

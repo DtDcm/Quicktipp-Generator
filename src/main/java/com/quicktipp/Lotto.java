@@ -8,8 +8,8 @@ import java.util.List;
  * Die Klasse Lotto implementiert die Generierung von Tippreihen für die Lotterie "Lotto".
  */
 public class Lotto extends ZahlenLotterie{
-    private static final int ANZAHL_TIPP_ZAHLEN = 6;
-    private static final int ZAHLENRAUM = 49;
+    private final int ANZAHL_TIPP_ZAHLEN = 6;
+    private final int ZAHLENRAUM = 49;
     private List<Integer> tippzahlen = new ArrayList<>();
 
     /**

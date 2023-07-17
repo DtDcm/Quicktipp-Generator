@@ -8,8 +8,8 @@ import java.util.List;
  * Die Klasse Eurojackpot implementiert die Generierung von Tippreihen für die Lotterie "Eurojackpot".
  */
 public class Eurojackpot extends ZahlenLotterie {
-    private static final int ANZAHL_TIPP_ZAHLEN = 5;
-    private static final int ZAHLENRAUM = 50;
+    private final int ANZAHL_TIPP_ZAHLEN = 5;
+    private final int ZAHLENRAUM = 50;
     private List<Integer> tippzahlen = new ArrayList<>();
     private List<Integer> eurozahlen = new ArrayList<>();
 
