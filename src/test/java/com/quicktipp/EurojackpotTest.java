@@ -1,11 +1,13 @@
 package com.quicktipp;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -37,11 +39,49 @@ public class EurojackpotTest {
         }
     }
 
+    @Nested
+    class istGenerierungMöglichTest {
+        @Test
+        public void validAnzahl() {
+            List<Integer> unglückszahlen = new ArrayList<>();
+            for(int i = 6; i<= 50; i++){
+                unglückszahlen.add(i);
+            }
+            assertTrue(eurojackpot.istGenerierungMöglich(unglückszahlen));
+        }
+
+        @Test
+        public void invalidAnzahl() {
+            List<Integer> unglückszahlen = new ArrayList<>();
+            for(int i = 5; i<= 50; i++){
+                unglückszahlen.add(i);
+            }
+            assertFalse(eurojackpot.istGenerierungMöglich(unglückszahlen));
+        }
+
+        @Test
+        public void validAnzahlEurozahl() {
+            List<Integer> unglückszahlen = new ArrayList<>();
+            for(int i = 1; i<= 8; i++){
+                unglückszahlen.add(i);
+            }
+            assertTrue(eurojackpot.istGenerierungMöglich(unglückszahlen));
+        }
+
+        @Test
+        public void invalidAnzahlEurozahl() {
+            List<Integer> unglückszahlen = new ArrayList<>();
+            for(int i = 1; i<= 9; i++){
+                unglückszahlen.add(i);
+            }
+            assertFalse(eurojackpot.istGenerierungMöglich(unglückszahlen));
+        }
+    }
+
     @Test
     public void generiereTippreiheTest() {
         
         List<Integer> unglückszahlen = Arrays.asList(1, 5, 13, 24, 37, 45);
-
         
         eurojackpot.generiereTippreihe(unglückszahlen);
         List<Integer> generierteZahlen = eurojackpot.getTippzahlen();
@@ -65,5 +105,29 @@ public class EurojackpotTest {
 
         assertTrue(!generierteZahlen.containsAll(unglückszahlen));
         assertTrue(!generierteEuroZahlen.containsAll(unglückszahlen));
+    }
+
+    @Test
+    public void generiereTippreiheNichtMöglichTest() {
+        List<Integer> unglückszahlen = new ArrayList<>();
+        for(int i = 5; i<= 50; i++){
+                unglückszahlen.add(i);
+        }
+        
+        Assertions.assertThrows(IllegalStateException.class, () -> {
+                eurojackpot.generiereTippreihe(unglückszahlen);
+        });
+    }
+
+    @Test
+    public void generiereTippreiheNichtMöglichEurozahlenTest() {
+        List<Integer> unglückszahlen = new ArrayList<>();
+        for(int i = 1; i<= 9; i++){
+                unglückszahlen.add(i);
+        }
+        
+        Assertions.assertThrows(IllegalStateException.class, () -> {
+                eurojackpot.generiereTippreihe(unglückszahlen);
+        });
     }
 }

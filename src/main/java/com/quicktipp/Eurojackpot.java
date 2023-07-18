@@ -9,6 +9,7 @@ import java.util.List;
  */
 public class Eurojackpot extends ZahlenLotterie {
     private final int ANZAHL_TIPP_ZAHLEN = 5;
+    private final int ANZAHL_EURO_ZAHLEN = 2;
     private final int ZAHLENRAUM = 50;
     private final int EURO_ZAHLENRAUM = 10;
     private List<Integer> tippzahlen = new ArrayList<>();
@@ -19,15 +20,11 @@ public class Eurojackpot extends ZahlenLotterie {
     * Nachdem die Tippzahlen erfolgreich generiert wurden, werden sie in der Konsole ausgegeben.
     * 
     * @param unglückszahlen Die Liste der Unglückszahlen, die ausgeschlossen werden sollen.
+    * @throws IllegalStateException Wenn bereits zu viele Unglückszahlen vorhanden sind.
     */
-    public void generiereTippreihe(List<Integer> unglückszahlen) {
-        try {
-            tippzahlen = generiereZahlen(unglückszahlen, ANZAHL_TIPP_ZAHLEN, ZAHLENRAUM);
-            eurozahlen = generiereZahlen(unglückszahlen, 2, EURO_ZAHLENRAUM);
-        } catch (IllegalStateException e) {
-            System.out.println(e.getMessage());
-            return;
-        }
+    public void generiereTippreihe(List<Integer> unglückszahlen) throws IllegalStateException {
+        tippzahlen = generiereZahlen(unglückszahlen, ANZAHL_TIPP_ZAHLEN, ZAHLENRAUM);
+        eurozahlen = generiereZahlen(unglückszahlen, ANZAHL_EURO_ZAHLEN, EURO_ZAHLENRAUM);
 
         System.out.println(">> Quick-Tipp: " + Arrays.toString(tippzahlen.toArray()) + " + " + Arrays.toString(eurozahlen.toArray()));
     }
@@ -54,6 +51,30 @@ public class Eurojackpot extends ZahlenLotterie {
     }
 
     /**
+    * Die Methode überprüft, ob zu viele Unglückszahlen ausgeschlossen sind und dadurch keine vollständige Generierung möglich ist.
+    * 
+    * @param unglückszahlen Die Liste der Unglückszahlen.
+    * @return false, wenn zu viele Unglückszahlen ausgeschlossen sind, ansonsten true.
+    */
+    @Override
+    public boolean istGenerierungMöglich(List<Integer> unglückszahlen){
+        int anzahlVerbleibenderZahlen = 0;
+        int anzahlVerbleibenderEurozahlen = 0;
+        for (Integer zahl : unglückszahlen) {
+            if(istGültigeZahl(zahl)){
+                anzahlVerbleibenderZahlen++;
+            }
+            if(istGültigeEurozahl(zahl)){
+                anzahlVerbleibenderEurozahlen++;
+            }
+        }
+        if(anzahlVerbleibenderZahlen > ZAHLENRAUM - ANZAHL_TIPP_ZAHLEN || anzahlVerbleibenderEurozahlen > EURO_ZAHLENRAUM - ANZAHL_EURO_ZAHLEN){
+            return false;
+        }
+        return true;
+    }
+
+    /**
     * Die Methode gibt den Lotterienamen "Eurojackpot" zurück.
     * 
     * @return "Eurojackpot"
@@ -71,6 +92,15 @@ public class Eurojackpot extends ZahlenLotterie {
     @Override
     public int getAnzahlTippzahlen() {
         return ANZAHL_TIPP_ZAHLEN;
+    }
+
+    /**
+    * Die Methode gibt die Anzahl der Tippzahlen zurück.
+    * 
+    * @return ANZAHL_EURO_ZAHLEN
+    */
+    public int getAnzahlEurozahlen() {
+        return ANZAHL_EURO_ZAHLEN;
     }
 
     /**

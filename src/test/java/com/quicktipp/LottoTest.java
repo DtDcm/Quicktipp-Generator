@@ -1,12 +1,16 @@
 package com.quicktipp;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Set;
 
@@ -21,7 +25,7 @@ public class LottoTest {
          lotto = new Lotto();
     }
 
-        @Nested
+    @Nested
     class istGültigeZahlTest {
         @ParameterizedTest
         @ValueSource(ints = {1, 49, 10, 23})
@@ -33,6 +37,27 @@ public class LottoTest {
         @ValueSource(ints = {0, -1, 50})
         public void invalidZahl(int zahl) {
             assertFalse(lotto.istGültigeZahl(zahl));
+        }
+    }
+
+    @Nested
+    class istGenerierungMöglichTest {
+        @Test
+        public void validAnzahl() {
+            List<Integer> unglückszahlen = new ArrayList<>();
+            for(int i = 1; i<= 43; i++){
+                unglückszahlen.add(i);
+            }
+            assertTrue(lotto.istGenerierungMöglich(unglückszahlen));
+        }
+
+        @Test
+        public void invalidAnzahl() {
+            List<Integer> unglückszahlen = new ArrayList<>();
+            for(int i = 1; i<= 44; i++){
+                unglückszahlen.add(i);
+            }
+            assertFalse(lotto.istGenerierungMöglich(unglückszahlen));
         }
     }
 
@@ -54,5 +79,17 @@ public class LottoTest {
         assertEquals(6, eindeutigeZahlen.size());
         
         assertTrue(!generierteZahlen.containsAll(unglückszahlen));
+    }
+
+    @Test
+    public void generiereTippreiheNichtMöglichTest() {
+        List<Integer> unglückszahlen = new ArrayList<>();
+        for(int i = 1; i<= 44; i++){
+                unglückszahlen.add(i);
+        }
+        
+        Assertions.assertThrows(IllegalStateException.class, () -> {
+                lotto.generiereTippreihe(unglückszahlen);
+        });
     }
 }

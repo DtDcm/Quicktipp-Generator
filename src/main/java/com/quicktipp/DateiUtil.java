@@ -13,11 +13,15 @@ import java.util.logging.*;
  * Zusätzlich bietet sie Funktionen zur Initialisierung eines Loggers und zum Loggen von Nachrichten.
  */
 public class DateiUtil {
-    private String dateiPfad = "Unglückszahlen.txt";
+    private String dateiPfad;
 
     private final String LOGFILENAME = "logfile.log";
     private final Logger LOGGER = Logger.getLogger("com.quicktipp");
     private FileHandler fileHandler;
+
+    DateiUtil(String dateiPfad){
+        this.dateiPfad = dateiPfad;
+    }
 
     /**
     * Die Methode speichert die übergebene Liste von Unglückszahlen in einer Datei.
@@ -150,12 +154,5 @@ public class DateiUtil {
     */
     public void logNachricht(String message) {
         LOGGER.log(Level.SEVERE, message + "\n");
-    }
-
-    /**
-    * Die Methode setzt den Dateipfad für die Speicherung der Unglückszahlen.
-    */
-    public void setDateiPfad(String dateiPfad){
-        this.dateiPfad = dateiPfad;
     }
 }

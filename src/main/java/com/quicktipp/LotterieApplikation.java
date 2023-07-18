@@ -12,9 +12,10 @@ import java.util.Scanner;
  */
 public class LotterieApplikation 
 {
+    private String dateiPfad = "Unglückszahlen.txt";
     public ZahlenLotterie lotterie;
     public List<Integer> unglückszahlen = new ArrayList<Integer>();
-    private DateiUtil dateiUtil = new DateiUtil();
+    public DateiUtil dateiUtil = new DateiUtil(dateiPfad);
     public final int anzahlUnglückzahlenEingabe = 6;
     
     public static void main(String[] args)
@@ -33,6 +34,7 @@ public class LotterieApplikation
         String istNeueTippreihe = "Ja";
         Scanner scanner = new Scanner(System.in);
         dateiUtil.initialisiereLogger();
+        
 
         while (istNeueTippreihe.equalsIgnoreCase("Ja")) {
                 unglückszahlen = dateiUtil.ladeUnglückszahlen();
@@ -42,10 +44,13 @@ public class LotterieApplikation
                 if (!unglückszahlen.isEmpty()) {
                     handleLöschEingabe(scanner);               
                 }
-                
                 handleZahlenEingabe(scanner);
-
-                lotterie.generiereTippreihe(unglückszahlen);
+                try {
+                    lotterie.generiereTippreihe(unglückszahlen);
+                } catch (IllegalStateException e) {
+                    System.out.println(e.getMessage());
+                    dateiUtil.logNachricht(e.getMessage());
+                }
                 dateiUtil.speichereUnglückszahlen(unglückszahlen);
 
                 istNeueTippreihe = handleAntwortEingabe(scanner);
@@ -125,7 +130,7 @@ public class LotterieApplikation
                 dateiUtil.logNachricht("Ein Fehler ist aufgetreten: Der Benutzer hat eine inkorrekte Eingabe getätigt: " + eingabe +". Erlaubte Eingaben sind nur ganze Zahlen.");
                 System.out.println(">> Inkorrekte Eingabe. Die Eingabe darf nur ganze Zahlen enhalten.");
             }
-            catch (InputMismatchException | IllegalStateException e) {
+            catch (InputMismatchException e) {
                 System.out.println(e.getMessage());
             }
         }
@@ -135,8 +140,7 @@ public class LotterieApplikation
     * Die Methode überprüft die Benutzereingabe für die Unglückszahlen.
     * Sie überprüft, ob die Eingabe eine ganze Zahl ist und ob jede einzelne Zahl, im zulässigen Zahlenraum der Lotterie liegt.
     * Dann überprüft auch, ob die Anzahl der eingegebenen Zahlen die erlaubte Obergrenze nicht überschreitet.
-    * Zudem wird überprüft, ob die Gesamtzahl der bereits gespeicherten Unglückszahlen zusammen mit den neuen Eingaben
-    * die erlaubte Anzahl von Unglückszahlen nicht überschreitet. Falls diese Überprüfungen fehlschlagen,
+    * Falls diese Überprüfungen fehlschlagen,
     * werden entsprechende Fehlermeldungen ausgelöst und protokolliert.
     * 
     * @param eingabe Die Benutzereingabe für die Unglückszahlen.
@@ -158,11 +162,6 @@ public class LotterieApplikation
         if(zahlEingaben.length > anzahlUnglückzahlenEingabe){
             dateiUtil.logNachricht("Ein Fehler ist aufgetreten: Der Benutzer hat eine inkorrekte Eingabe getätigt: " + eingabe +". Erlaubte sind nur bis zu 6 Zahlen.");
             throw new InputMismatchException(">> Inkorrekte Eingabe. Sie können nur bis zu 6 Zahlen eingeben.");
-        }
-
-        if(unglückszahlen.size() + zahlEingaben.length > lotterie.getZahlenraum() - lotterie.getAnzahlTippzahlen()){
-            dateiUtil.logNachricht("Ein Fehler ist aufgetreten: Es sind schon zu viele Unglückzahlen gespeichert");
-            throw new IllegalStateException("Es sind schon zu viele Unglückzahlen gespeichert. Bitte Löschen die Unglückzahlen, die Sie nicht mehr verwenden wollen.");
         }
         
         return true;

@@ -1,4 +1,5 @@
 /Unglückszahlen.txt
 /Manifest.txt
 *.log
+logfile.log.lck
 .vscode/

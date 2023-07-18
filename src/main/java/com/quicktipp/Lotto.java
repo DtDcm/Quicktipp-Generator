@@ -17,14 +17,10 @@ public class Lotto extends ZahlenLotterie{
     * Nachdem die Tippzahlen erfolgreich generiert wurden, werden sie in der Konsole ausgegeben.
     * 
     * @param unglückszahlen Die Liste der Unglückszahlen, die ausgeschlossen werden sollen.
+    * @throws IllegalStateException Wenn bereits zu viele Unglückszahlen vorhanden sind.
     */
-    public void generiereTippreihe(List<Integer> unglückszahlen) {
-        try {
-            tippzahlen = generiereZahlen(unglückszahlen, ANZAHL_TIPP_ZAHLEN, ZAHLENRAUM);
-        } catch (IllegalStateException e) {
-            System.out.println(e.getMessage());
-            return;
-        }
+    public void generiereTippreihe(List<Integer> unglückszahlen) throws IllegalStateException {
+        tippzahlen = generiereZahlen(unglückszahlen, ANZAHL_TIPP_ZAHLEN, ZAHLENRAUM);
 
         System.out.println(">> Quick-Tipp: " + Arrays.toString(tippzahlen.toArray()));
     }
@@ -38,6 +34,20 @@ public class Lotto extends ZahlenLotterie{
     @Override
     public boolean istGültigeZahl(int zahl) {
         return (zahl > 0 && zahl <= ZAHLENRAUM);
+    }
+
+    /**
+    * Die Methode überprüft, ob zu viele Unglückszahlen ausgeschlossen sind und dadurch keine vollständige Generierung möglich ist.
+    * 
+    * @param unglückszahlen Die Liste der Unglückszahlen.
+    * @return false, wenn zu viele Unglückszahlen ausgeschlossen sind, ansonsten true.
+    */
+    @Override
+    public boolean istGenerierungMöglich(List<Integer> unglückszahlen){
+        if(unglückszahlen.size() > ZAHLENRAUM - ANZAHL_TIPP_ZAHLEN){
+            return false;
+        }
+        return true;
     }
 
     /**

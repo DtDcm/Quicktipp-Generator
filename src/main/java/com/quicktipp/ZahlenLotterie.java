@@ -25,9 +25,10 @@ public abstract class ZahlenLotterie implements TippreihenGenerator {
         Random random = new Random();
         List<Integer> generierteTippzahlen = new ArrayList<>();
 
-        // if(unglückszahlen.size() > zahlenraum - max){
-        //     throw new IllegalStateException("Ein interner Fehler ist aufgetreten: Es sind schon zu viele Unglückzahlen.");
-        // }
+        if(!istGenerierungMöglich(unglückszahlen)){
+            throw new IllegalStateException(">> Es konnte keine vollstädige Tippreihe für " + getLotterieName() + " generiert werden, aufgrund der ausgeschlossen Zahlen."
+            + "\n>> Bitte löschen Sie Unglückzahlen, die Sie nicht mehr verwenden wollen.");
+        }
 
         while (generierteTippzahlen.size() < max) {
             int zufallszahl = random.nextInt(zahlenraum) + 1;

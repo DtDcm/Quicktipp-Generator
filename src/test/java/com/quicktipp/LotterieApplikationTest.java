@@ -1,10 +1,13 @@
 package com.quicktipp;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.InputMismatchException;
@@ -14,13 +17,22 @@ import static org.junit.Assert.*;
 
 public class LotterieApplikationTest {
     
+    private String testDateiPfad = "TestUnglückszahlen.txt";
     LotterieApplikation app;
     DateiUtil dateiUtil;
 
     @BeforeEach
     public void setUp() {
         app = new LotterieApplikation();
-        dateiUtil = new DateiUtil();
+        app.dateiUtil = new DateiUtil(testDateiPfad);
+    }
+
+    @AfterEach
+    public void tearDown() {
+        File testDatei = new File(testDateiPfad);
+        if (testDatei.exists()) {
+            testDatei.delete();
+        }
     }
 
     @Nested
@@ -129,90 +141,7 @@ public class LotterieApplikationTest {
             } catch (InputMismatchException e) {
                 Assertions.assertEquals(">> Inkorrekte Eingabe. Sie können nur bis zu 6 Zahlen eingeben.", e.getMessage());
             }
-        }
-
-        @ParameterizedTest
-        @ValueSource(strings = {"44 45 46 47 48 49"})
-        public void validAnzahlGespeicherterUnglückszahlenLotto(String eingabe) {
-            app.lotterie = new Lotto();
-            for(int i = 1; i<=37; i++){
-                app.unglückszahlen.add(i);
-            }
-            boolean result = app.überprüfeZahlenEingabe(eingabe.trim());
-            Assertions.assertTrue(result);
-        }
-
-        @ParameterizedTest
-        @ValueSource(strings = {"44", "44 45 46 47 48 49"})
-        public void invalidAnzahlGespeicherterUnglückszahlenLotto(String eingabe) {
-            app.lotterie = new Lotto();
-            for(int i = 1; i<=43; i++){
-                app.unglückszahlen.add(i);
-            }
-            try {
-                app.überprüfeZahlenEingabe(eingabe.trim());
-                Assertions.fail("Expected IllegalStateException to be thrown.");
-            } catch (IllegalStateException e) {
-                Assertions.assertEquals("Es sind schon zu viele Unglückzahlen gespeichert. Bitte Löschen die Unglückzahlen, die Sie nicht mehr verwenden wollen.", e.getMessage());
-            }
-        }
-
-        @ParameterizedTest
-        @ValueSource(strings = {"44 45 46 47 48 49"})
-        public void invalidAnzahlGespeicherterUnglückszahlenGrenzeLotto(String eingabe) {
-            app.lotterie = new Lotto();
-            for(int i = 1; i<=38; i++){
-                app.unglückszahlen.add(i);
-            }
-            try {
-                app.überprüfeZahlenEingabe(eingabe.trim());
-                Assertions.fail("Expected IllegalStateException to be thrown.");
-            } catch (IllegalStateException e) {
-                Assertions.assertEquals("Es sind schon zu viele Unglückzahlen gespeichert. Bitte Löschen die Unglückzahlen, die Sie nicht mehr verwenden wollen.", e.getMessage());
-            }
-        }
-
-        @ParameterizedTest
-        @ValueSource(strings = {"46 47 48 49 50"})
-        public void validAnzahlGespeicherterUnglückszahlenEurojackpot(String eingabe) {
-            app.lotterie = new Eurojackpot();
-            for(int i = 1; i<=40; i++){
-                app.unglückszahlen.add(i);
-            }
-            boolean result = app.überprüfeZahlenEingabe(eingabe.trim());
-            Assertions.assertTrue(result);
-        }
-
-        @ParameterizedTest
-        @ValueSource(strings = {"46", "46 47 48 49 50"})
-        public void invalidAnzahlGespeicherterUnglückszahlen(String eingabe) {
-            app.lotterie = new Eurojackpot();
-            for(int i = 1; i<=45; i++){
-                app.unglückszahlen.add(i);
-            }
-            try {
-                app.überprüfeZahlenEingabe(eingabe.trim());
-                Assertions.fail("Expected IllegalStateException to be thrown.");
-            } catch (IllegalStateException e) {
-                Assertions.assertEquals("Es sind schon zu viele Unglückzahlen gespeichert. Bitte Löschen die Unglückzahlen, die Sie nicht mehr verwenden wollen.", e.getMessage());
-            }
-        }
-
-
-        @ParameterizedTest
-        @ValueSource(strings = {"46 47 48 49 50"})
-        public void invalidAnzahlGespeicherterUnglückszahlenGrenze(String eingabe) {
-            app.lotterie = new Eurojackpot();
-            for(int i = 1; i<=41; i++){
-                app.unglückszahlen.add(i);
-            }
-            try {
-                app.überprüfeZahlenEingabe(eingabe.trim());
-                Assertions.fail("Expected IllegalStateException to be thrown.");
-            } catch (IllegalStateException e) {
-                Assertions.assertEquals("Es sind schon zu viele Unglückzahlen gespeichert. Bitte Löschen die Unglückzahlen, die Sie nicht mehr verwenden wollen.", e.getMessage());
-            }
-        }
+        }   
     }
     
     @Nested
@@ -295,10 +224,7 @@ public class LotterieApplikationTest {
         @ValueSource(strings = {"3 40 1\n", "3 40  1\n"})
         public void validLöschEingabe(String eingabe) {
             
-            
-            
-            dateiUtil.löscheAlleUnglückszahlen();
-            dateiUtil.speichereUnglückszahlen(Arrays.asList(3, 13, 24, 40, 1));
+            app.dateiUtil.speichereUnglückszahlen(Arrays.asList(3, 13, 24, 40, 1));
 
             List<Integer> erwarteteUnglückszahlen = List.of(13, 24);
 
@@ -311,10 +237,7 @@ public class LotterieApplikationTest {
         @ValueSource(strings = {"Alle\n", "alle\n", "ALLE\n", "  alle\n  "})
         public void validLöschEingabeAlle(String eingabe) {
             
-            
-            
-            dateiUtil.löscheAlleUnglückszahlen();
-            dateiUtil.speichereUnglückszahlen(Arrays.asList(3, 13, 24, 40, 1));
+            app.dateiUtil.speichereUnglückszahlen(Arrays.asList(3, 13, 24, 40, 1));
 
             List<Integer> erwarteteUnglückszahlen = new ArrayList<>();
 
@@ -327,10 +250,7 @@ public class LotterieApplikationTest {
         @ValueSource(strings = {"\n", "   \n"})
         public void validLöschEingabeLeer(String eingabe) {
             
-            
-            
-            dateiUtil.löscheAlleUnglückszahlen();
-            dateiUtil.speichereUnglückszahlen(Arrays.asList(3, 13, 24, 40, 1));
+            app.dateiUtil.speichereUnglückszahlen(Arrays.asList(3, 13, 24, 40, 1));
 
             List<Integer> erwarteteUnglückszahlen = List.of(1, 3, 13, 24, 40);
 

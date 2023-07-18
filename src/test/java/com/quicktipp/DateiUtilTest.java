@@ -10,13 +10,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class DateiUtilTest {
-    private String testDateiPfad = "TestUnglückszahlen.txt";;
+    private String testDateiPfad = "TestUnglückszahlen.txt";
     private DateiUtil dateiUtil;
 
     @Before
     public void setUp() {
-        dateiUtil = new DateiUtil();
-        dateiUtil.setDateiPfad(testDateiPfad); 
+        dateiUtil = new DateiUtil(testDateiPfad);
     }
 
     @After
