@@ -42,7 +42,6 @@ public class Lotto extends ZahlenLotterie{
     * @param unglückszahlen Die Liste der Unglückszahlen.
     * @return false, wenn zu viele Unglückszahlen ausgeschlossen sind, ansonsten true.
     */
-    @Override
     public boolean istGenerierungMöglich(List<Integer> unglückszahlen){
         if(unglückszahlen.size() > ZAHLENRAUM - ANZAHL_TIPP_ZAHLEN){
             return false;

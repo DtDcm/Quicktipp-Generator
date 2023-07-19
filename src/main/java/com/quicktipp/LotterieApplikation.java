@@ -1,6 +1,7 @@
 package com.quicktipp;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -12,11 +13,12 @@ import java.util.Scanner;
  */
 public class LotterieApplikation 
 {
-    private String dateiPfad = "Unglückszahlen.txt";
+    public String dateiPfad = "Unglückszahlen.txt";
     public ZahlenLotterie lotterie;
     public List<Integer> unglückszahlen = new ArrayList<Integer>();
     public DateiUtil dateiUtil = new DateiUtil(dateiPfad);
     public final int anzahlUnglückzahlenEingabe = 6;
+    public final int maxGespeicherterUnglückzahlen = 30;
     
     public static void main(String[] args)
     {
@@ -42,16 +44,17 @@ public class LotterieApplikation
                 handleLotterieEingabe(scanner);
 
                 if (!unglückszahlen.isEmpty()) {
-                    handleLöschEingabe(scanner);               
+                    handleLöschEingabe(scanner);                   
                 }
+                
                 handleZahlenEingabe(scanner);
                 try {
                     lotterie.generiereTippreihe(unglückszahlen);
+                    dateiUtil.speichereUnglückszahlen(unglückszahlen);
                 } catch (IllegalStateException e) {
                     System.out.println(e.getMessage());
                     dateiUtil.logNachricht(e.getMessage());
                 }
-                dateiUtil.speichereUnglückszahlen(unglückszahlen);
 
                 istNeueTippreihe = handleAntwortEingabe(scanner);
             }
@@ -118,13 +121,7 @@ public class LotterieApplikation
             }
             try {
                 isValid = überprüfeZahlenEingabe(eingabe);
-                for (String s : eingabe.split("\\s+")) {
-                    int zahl = Integer.parseInt(s);
-                    
-                    if(!unglückszahlen.contains(zahl)){
-                        unglückszahlen.add(zahl);
-                    }
-                }
+                unglückszahlen = fügeZahlenEin(unglückszahlen, eingabe);
                 break;
             } catch (NumberFormatException e){
                 dateiUtil.logNachricht("Ein Fehler ist aufgetreten: Der Benutzer hat eine inkorrekte Eingabe getätigt: " + eingabe +". Erlaubte Eingaben sind nur ganze Zahlen.");
@@ -133,6 +130,12 @@ public class LotterieApplikation
             catch (InputMismatchException e) {
                 System.out.println(e.getMessage());
             }
+            catch (IllegalStateException e) {
+                System.out.println(e.getMessage());
+                System.out.println(">> Bitte löschen Sie die gespeicherten Zahlen, die Sie nicht mehr verwenden wollen.");
+                handleLöschEingabe(scanner);
+                System.out.println(">> Geben Sie bis zu 6 Unglückszahlen die ausgeschlossen werden sollen, zum Bespiel '3 13 24 40 31':");
+            }
         }
     }
 
@@ -140,6 +143,7 @@ public class LotterieApplikation
     * Die Methode überprüft die Benutzereingabe für die Unglückszahlen.
     * Sie überprüft, ob die Eingabe eine ganze Zahl ist und ob jede einzelne Zahl, im zulässigen Zahlenraum der Lotterie liegt.
     * Dann überprüft auch, ob die Anzahl der eingegebenen Zahlen die erlaubte Obergrenze nicht überschreitet.
+    * Zudem wird überprüft, dass mit den neuen Zahleneigaben eine Maximum von gespeicherten Zahlen überschritten wird.
     * Falls diese Überprüfungen fehlschlagen,
     * werden entsprechende Fehlermeldungen ausgelöst und protokolliert.
     * 
@@ -150,6 +154,7 @@ public class LotterieApplikation
     * @throws IllegalStateException Wenn bereits zu viele Unglückszahlen gespeichert sind.
     */
     public boolean überprüfeZahlenEingabe(String eingabe) throws NumberFormatException, InputMismatchException, IllegalStateException{
+        HashSet<Integer> temp = new HashSet<Integer>();
         String[] zahlEingaben = eingabe.split("\\s+");
         for (String s : zahlEingaben) {
             int zahl = Integer.parseInt(s);
@@ -157,13 +162,21 @@ public class LotterieApplikation
                 dateiUtil.logNachricht("Ein Fehler ist aufgetreten: Der Benutzer hat eine inkorrekte Eingabe getätigt: " + zahl +". Die Eingaben liegen nicht im korrekten Zahlenraum.");
                 throw new InputMismatchException(">> Inkorrekte Eingabe. Die Zahlen bei " + lotterie.getLotterieName() +" dürfen nur zwischen 1 und " + lotterie.getZahlenraum() + ".");
             }
+
+            temp.add(zahl);
         }
 
         if(zahlEingaben.length > anzahlUnglückzahlenEingabe){
             dateiUtil.logNachricht("Ein Fehler ist aufgetreten: Der Benutzer hat eine inkorrekte Eingabe getätigt: " + eingabe +". Erlaubte sind nur bis zu 6 Zahlen.");
             throw new InputMismatchException(">> Inkorrekte Eingabe. Sie können nur bis zu 6 Zahlen eingeben.");
         }
-        
+
+        temp.addAll(unglückszahlen);
+        if(temp.size() > maxGespeicherterUnglückzahlen){
+            dateiUtil.logNachricht("Ein Fehler ist aufgetreten: Mit den eingebenen Zahlen würde das Maximum von 30 gespeicherten Zahlen überschritten werden.");
+            throw new IllegalStateException(">> Mit den eingebenen Zahlen würde das Maximum von 30 gespeicherten Zahlen überschritten werden.");
+        }
+
         return true;
     }
 
@@ -180,7 +193,7 @@ public class LotterieApplikation
     public void handleLöschEingabe(Scanner scanner){
         boolean isValid = false;
         List<Integer> zuLöschen = new ArrayList<>();
-        System.out.println(">> Diese wurden schon gespeichert:\n>> " 
+        System.out.println(">> Diese Zahlen wurden schon gespeichert:\n>> " 
         + unglückszahlen.toString() 
         + "\n>> Wollen Sie Zahlen löschen:"
         + "\n -- Geben Sie die Zahlen ein, die aus der Datei entfernt werden sollen"
@@ -189,33 +202,27 @@ public class LotterieApplikation
 
         while(!isValid){
             String eingabe = scanner.nextLine().trim();
-                if (eingabe.equalsIgnoreCase("Alle")) {
-                    dateiUtil.löscheAlleUnglückszahlen();
-                    break;
-                }
+            if (eingabe.equalsIgnoreCase("Alle")) {
+                dateiUtil.löscheAlleUnglückszahlen();
+                break;
+            }
 
-                if(eingabe.isEmpty()){
-                    break;
-                }
-                
-                try{
-                    isValid = überprüfeLöschEingabe(eingabe);
-                    for (String s : eingabe.split("\\s+")) {
-                        int zahl = Integer.parseInt(s);
-                        
-                        if(!zuLöschen.contains(zahl)){
-                            zuLöschen.add(zahl);
-                        }
-                    }
-                    dateiUtil.löscheUnglückszahlen(zuLöschen);
-                }
-                catch (NumberFormatException e){
-                    dateiUtil.logNachricht("Ein Fehler ist aufgetreten: Der Benutzer hat eine inkorrekte Eingabe getätigt: " + eingabe +". Erlaubte Eingaben sind nur ganze Zahlen.");
-                    System.out.println(">> Inkorrekte Eingabe. Die Eingabe darf nur ganze Zahlen enhalten.");
-                }
-                catch (InputMismatchException e) {
-                    System.out.println(e.getMessage());
-                }
+            if(eingabe.isEmpty()){
+                break;
+            }
+            
+            try{
+                isValid = überprüfeLöschEingabe(eingabe);
+                zuLöschen = fügeZahlenEin(zuLöschen, eingabe);
+                dateiUtil.löscheUnglückszahlen(zuLöschen);
+            }
+            catch (NumberFormatException e){
+                dateiUtil.logNachricht("Ein Fehler ist aufgetreten: Der Benutzer hat eine inkorrekte Eingabe getätigt: " + eingabe +". Erlaubte Eingaben sind nur ganze Zahlen.");
+                System.out.println(">> Inkorrekte Eingabe. Die Eingabe darf nur ganze Zahlen enhalten.");
+            }
+            catch (InputMismatchException e) {
+                System.out.println(e.getMessage());
+            }
         }
         unglückszahlen = dateiUtil.ladeUnglückszahlen();
     }
@@ -242,6 +249,7 @@ public class LotterieApplikation
         }
         return true;
     }
+
     
     /**
     * Die Methode ermöglicht es dem Benutzer, eine weitere Tippreihe zu generieren.
@@ -283,5 +291,23 @@ public class LotterieApplikation
             throw new InputMismatchException(">> Inkorrekte Eingabe. Bitte geben Sie entweder Ja oder Nein an.");
         }
         return true;
+    }
+
+    /**
+    * Die Methode fügt die eingegebenen Zahlen zur übergebenen Liste hinzu.
+    *
+    * @param numbers Eine Liste von Zahlen
+    * @param eingabe Die eingegebenen Zahlen
+    * @return numbers Die Liste von Zahlen mit den neu hinzugefügten Zahlen
+    */
+    public List<Integer> fügeZahlenEin(List<Integer> numbers, String eingabe){
+        for (String s : eingabe.split("\\s+")) {
+            int zahl = Integer.parseInt(s);
+            
+            if(!numbers.contains(zahl)){
+                numbers.add(zahl);
+            }
+        }
+        return numbers;
     }
 }

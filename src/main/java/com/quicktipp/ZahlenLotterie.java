@@ -26,7 +26,7 @@ public abstract class ZahlenLotterie implements TippreihenGenerator {
         List<Integer> generierteTippzahlen = new ArrayList<>();
 
         if(!istGenerierungMöglich(unglückszahlen)){
-            throw new IllegalStateException(">> Es konnte keine vollstädige Tippreihe für " + getLotterieName() + " generiert werden, aufgrund der ausgeschlossen Zahlen."
+            throw new IllegalStateException(">> Es konnte keine vollstädige Tippreihe für " + getLotterieName() + " generiert werden, aufgrund der ausgeschlossenen Zahlen."
             + "\n>> Bitte löschen Sie Unglückzahlen, die Sie nicht mehr verwenden wollen.");
         }
 

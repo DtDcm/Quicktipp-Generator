@@ -141,7 +141,24 @@ public class LotterieApplikationTest {
             } catch (InputMismatchException e) {
                 Assertions.assertEquals(">> Inkorrekte Eingabe. Sie können nur bis zu 6 Zahlen eingeben.", e.getMessage());
             }
-        }   
+        }
+        
+        @ParameterizedTest
+        @ValueSource(strings = {"31"})
+        public void invalidAnzahlMaxGespeicherterZahlen(String eingabe) {
+            app.lotterie = new Eurojackpot();
+            for(int i = 1; i <= 30; i++){
+                app.unglückszahlen.add(i);
+            }
+
+            try {
+                app.überprüfeZahlenEingabe(eingabe.trim());
+                Assertions.fail("Expected IllegalStateException to be thrown.");
+            } catch (IllegalStateException e) {
+                Assertions.assertEquals(">> Mit den eingebenen Zahlen würde das Maximum von 30 gespeicherten Zahlen überschritten werden.", e.getMessage());
+            }
+            app.unglückszahlen.clear();
+        }
     }
     
     @Nested
@@ -150,8 +167,6 @@ public class LotterieApplikationTest {
         @ValueSource(strings = {"3 49 24 40 1\n"})
         public void validZahlEingabeLotto(String eingabe) {
             app.lotterie = new Lotto();
-            
-            
             
             List<Integer> erwarteteUnglückszahlen = List.of(3, 49, 24, 40, 1);
 
@@ -165,8 +180,6 @@ public class LotterieApplikationTest {
         public void validZahlEingabeEurojackpot(String eingabe) {
             app.lotterie = new Eurojackpot();
             
-            
-
             List<Integer> erwarteteUnglückszahlen = List.of(3, 50, 24, 40, 1);
 
             app.handleZahlenEingabe(new Scanner(eingabe));
@@ -179,8 +192,6 @@ public class LotterieApplikationTest {
         public void validLeereEingabe(String eingabe) {
             app.lotterie = new Lotto();
             
-            
-
             List<Integer> erwarteteUnglückszahlen = new ArrayList<>();
 
             app.handleZahlenEingabe(new Scanner(eingabe));
@@ -287,19 +298,26 @@ public class LotterieApplikationTest {
         @ValueSource(strings = {"Ja\n"})
         public void validEingabeJa(String eingabe) {
             
-            
-            
-
             Assertions.assertEquals("ja", app.handleAntwortEingabe(new Scanner(eingabe)));
         }
         @ParameterizedTest
         @ValueSource(strings = {"Nein\n"})
         public void validEingabeNein(String eingabe) {
-            
-            
-            
 
             Assertions.assertEquals("nein", app.handleAntwortEingabe(new Scanner(eingabe)));
+        }
+    }
+
+    @Nested
+    class FügeZahlenEinTests {
+        @ParameterizedTest
+        @ValueSource(strings = {"51 6"})
+        public void validEingabe(String eingabe){
+            List<Integer> neueZahlen = new ArrayList<>(Arrays.asList(1, 22, 13, 44));
+            List<Integer> erwarteteZahlen = Arrays.asList(1, 22, 13, 44, 51, 6);
+
+            List<Integer> tatsächlicheZahlen = app.fügeZahlenEin(neueZahlen, eingabe);
+            Assertions.assertEquals(erwarteteZahlen, tatsächlicheZahlen);
         }
     }
 }
