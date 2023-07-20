@@ -75,7 +75,7 @@ public class LotterieApplikation
             String eingabe = scanner.nextLine().trim();
             try {
                 überprüfeLotterieEingabe(eingabe);
-                System.out.println(">> Sie haben " + lotterie.getLotterieName() + " ausgewählt.");
+                System.out.println("\n>> Sie haben " + lotterie.getLotterieName() + " ausgewählt.");
                 break;
             } catch (InputMismatchException e) {
                 System.out.println(e.getMessage());
@@ -100,7 +100,7 @@ public class LotterieApplikation
         }
         else{
             dateiUtil.logNachricht("Ein Fehler ist aufgetreten: Der Benutzer hat eine inkorrekte Eingabe getätigt: " + eingabe +". Erlaubte Eingaben sind Lotto oder Eurojackpot.");
-            throw new InputMismatchException(">> Inkorrekte Eingabe. Bitte geben Sie entweder 'Lotto' oder 'Eurojackpot' an.");
+            throw new InputMismatchException("\n>> Inkorrekte Eingabe. Bitte geben Sie entweder 'Lotto' oder 'Eurojackpot' an.");
         }
     }
     /**
@@ -125,16 +125,16 @@ public class LotterieApplikation
                 break;
             } catch (NumberFormatException e){
                 dateiUtil.logNachricht("Ein Fehler ist aufgetreten: Der Benutzer hat eine inkorrekte Eingabe getätigt: " + eingabe +". Erlaubte Eingaben sind nur ganze Zahlen.");
-                System.out.println(">> Inkorrekte Eingabe. Die Eingabe darf nur ganze Zahlen enhalten.");
+                System.out.println("\n>> Inkorrekte Eingabe. Die Eingabe darf nur ganze Zahlen enhalten.");
             }
             catch (InputMismatchException e) {
                 System.out.println(e.getMessage());
             }
             catch (IllegalStateException e) {
                 System.out.println(e.getMessage());
-                System.out.println(">> Bitte löschen Sie die gespeicherten Zahlen, die Sie nicht mehr verwenden wollen.");
+                System.out.println("\n>> Bitte löschen Sie die gespeicherten Zahlen, die Sie nicht mehr verwenden wollen.");
                 handleLöschEingabe(scanner);
-                System.out.println(">> Geben Sie bis zu 6 Unglückszahlen die ausgeschlossen werden sollen, zum Bespiel '3 13 24 40 31':");
+                System.out.println("\n>> Geben Sie bis zu 6 Unglückszahlen die ausgeschlossen werden sollen, zum Bespiel '3 13 24 40 31':");
             }
         }
     }
@@ -160,7 +160,7 @@ public class LotterieApplikation
             int zahl = Integer.parseInt(s);
             if(!lotterie.istGültigeZahl(zahl)){
                 dateiUtil.logNachricht("Ein Fehler ist aufgetreten: Der Benutzer hat eine inkorrekte Eingabe getätigt: " + zahl +". Die Eingaben liegen nicht im korrekten Zahlenraum.");
-                throw new InputMismatchException(">> Inkorrekte Eingabe. Die Zahlen bei " + lotterie.getLotterieName() +" dürfen nur zwischen 1 und " + lotterie.getZahlenraum() + ".");
+                throw new InputMismatchException("\n>> Inkorrekte Eingabe. Die Zahlen bei " + lotterie.getLotterieName() +" dürfen nur zwischen 1 und " + lotterie.getZahlenraum() + ".");
             }
 
             temp.add(zahl);
@@ -168,13 +168,13 @@ public class LotterieApplikation
 
         if(zahlEingaben.length > anzahlUnglückzahlenEingabe){
             dateiUtil.logNachricht("Ein Fehler ist aufgetreten: Der Benutzer hat eine inkorrekte Eingabe getätigt: " + eingabe +". Erlaubte sind nur bis zu 6 Zahlen.");
-            throw new InputMismatchException(">> Inkorrekte Eingabe. Sie können nur bis zu 6 Zahlen eingeben.");
+            throw new InputMismatchException("\n>> Inkorrekte Eingabe. Sie können nur bis zu 6 Zahlen eingeben.");
         }
 
         temp.addAll(unglückszahlen);
         if(temp.size() > maxGespeicherterUnglückzahlen){
             dateiUtil.logNachricht("Ein Fehler ist aufgetreten: Mit den eingebenen Zahlen würde das Maximum von 30 gespeicherten Zahlen überschritten werden.");
-            throw new IllegalStateException(">> Mit den eingebenen Zahlen würde das Maximum von 30 gespeicherten Zahlen überschritten werden.");
+            throw new IllegalStateException("\n>> Mit den eingebenen Zahlen würde das Maximum von 30 gespeicherten Zahlen überschritten werden.");
         }
 
         return true;
@@ -218,7 +218,7 @@ public class LotterieApplikation
             }
             catch (NumberFormatException e){
                 dateiUtil.logNachricht("Ein Fehler ist aufgetreten: Der Benutzer hat eine inkorrekte Eingabe getätigt: " + eingabe +". Erlaubte Eingaben sind nur ganze Zahlen.");
-                System.out.println(">> Inkorrekte Eingabe. Die Eingabe darf nur ganze Zahlen enhalten.");
+                System.out.println("\n>> Inkorrekte Eingabe. Die Eingabe darf nur ganze Zahlen enhalten.");
             }
             catch (InputMismatchException e) {
                 System.out.println(e.getMessage());
@@ -244,7 +244,7 @@ public class LotterieApplikation
             int zahl = Integer.parseInt(s);
             if(zahl <= 0 || zahl > 50){
                 dateiUtil.logNachricht("Ein Fehler ist aufgetreten: Der Benutzer hat eine inkorrekte Eingabe getätigt: " + zahl +". Die Eingaben liegen nicht im korrekten Zahlenraum.");
-                throw new InputMismatchException(">> Inkorrekte Eingabe. Es gibt Zahlen, die nicht im korrekten Zahlenraum liegen.");
+                throw new InputMismatchException("\n>> Inkorrekte Eingabe. Es gibt Zahlen, die nicht im korrekten Zahlenraum liegen.");
             }
         }
         return true;
@@ -288,7 +288,7 @@ public class LotterieApplikation
     public boolean überprüfeAntwortEingabe(String eingabe) throws InputMismatchException{
         if(!eingabe.equalsIgnoreCase("Ja") && !eingabe.equalsIgnoreCase("Nein")){
             dateiUtil.logNachricht("Ein Fehler ist aufgetreten: Der Benutzer hat eine inkorrekte Eingabe getätigt: " + eingabe + ". Erlaubte Eingaben sind Ja oder Nein.");
-            throw new InputMismatchException(">> Inkorrekte Eingabe. Bitte geben Sie entweder Ja oder Nein an.");
+            throw new InputMismatchException("\n>> Inkorrekte Eingabe. Bitte geben Sie entweder Ja oder Nein an.");
         }
         return true;
     }

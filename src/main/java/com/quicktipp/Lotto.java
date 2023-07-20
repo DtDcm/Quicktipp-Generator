@@ -22,18 +22,7 @@ public class Lotto extends ZahlenLotterie{
     public void generiereTippreihe(List<Integer> unglückszahlen) throws IllegalStateException {
         tippzahlen = generiereZahlen(unglückszahlen, ANZAHL_TIPP_ZAHLEN, ZAHLENRAUM);
 
-        System.out.println(">> Quick-Tipp: " + Arrays.toString(tippzahlen.toArray()));
-    }
-
-    /**
-    * Die Methode überprüft, ob eine gegebene Zahl gültig ist für die Lotterie "Lotto".
-    * 
-    * @param zahl Die zu überprüfende Zahl.
-    * @return true, wenn die Zahl gültig ist, ansonsten false.
-    */
-    @Override
-    public boolean istGültigeZahl(int zahl) {
-        return (zahl > 0 && zahl <= ZAHLENRAUM);
+        System.out.println("\n>> Quick-Tipp: " + Arrays.toString(tippzahlen.toArray()));
     }
 
     /**
@@ -57,16 +46,6 @@ public class Lotto extends ZahlenLotterie{
     @Override
     public String getLotterieName() {
         return "Lotto";
-    }
-
-    /**
-    * Die Methode gibt die Anzahl der Tippzahlen zurück.
-    * 
-    * @return ANZAHL_TIPP_ZAHLEN
-    */
-    @Override
-    public int getAnzahlTippzahlen() {
-        return ANZAHL_TIPP_ZAHLEN;
     }
 
     /**

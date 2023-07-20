@@ -58,7 +58,7 @@ public class LotterieApplikationTest {
                 app.überprüfeLotterieEingabe(eingabe.trim());
                 Assertions.fail("Expected InputMismatchException to be thrown.");
             } catch (InputMismatchException e) {
-                Assertions.assertEquals(">> Inkorrekte Eingabe. Bitte geben Sie entweder 'Lotto' oder 'Eurojackpot' an.", e.getMessage());
+                Assertions.assertEquals("\n>> Inkorrekte Eingabe. Bitte geben Sie entweder 'Lotto' oder 'Eurojackpot' an.", e.getMessage());
             }
         }
     }
@@ -115,7 +115,7 @@ public class LotterieApplikationTest {
                 app.überprüfeZahlenEingabe(eingabe.trim());
                 Assertions.fail("Expected InputMismatchException to be thrown.");
             } catch (InputMismatchException e) {
-                Assertions.assertEquals(">> Inkorrekte Eingabe. Die Zahlen bei Lotto dürfen nur zwischen 1 und 49.", e.getMessage());
+                Assertions.assertEquals("\n>> Inkorrekte Eingabe. Die Zahlen bei Lotto dürfen nur zwischen 1 und 49.", e.getMessage());
             }
         }
 
@@ -127,7 +127,7 @@ public class LotterieApplikationTest {
                 app.überprüfeZahlenEingabe(eingabe.trim());
                 Assertions.fail("Expected InputMismatchException to be thrown.");
             } catch (InputMismatchException e) {
-                Assertions.assertEquals(">> Inkorrekte Eingabe. Die Zahlen bei Eurojackpot dürfen nur zwischen 1 und 50.", e.getMessage());
+                Assertions.assertEquals("\n>> Inkorrekte Eingabe. Die Zahlen bei Eurojackpot dürfen nur zwischen 1 und 50.", e.getMessage());
             }
         }
 
@@ -139,7 +139,7 @@ public class LotterieApplikationTest {
                 app.überprüfeZahlenEingabe(eingabe.trim());
                 Assertions.fail("Expected InputMismatchException to be thrown.");
             } catch (InputMismatchException e) {
-                Assertions.assertEquals(">> Inkorrekte Eingabe. Sie können nur bis zu 6 Zahlen eingeben.", e.getMessage());
+                Assertions.assertEquals("\n>> Inkorrekte Eingabe. Sie können nur bis zu 6 Zahlen eingeben.", e.getMessage());
             }
         }
         
@@ -155,7 +155,7 @@ public class LotterieApplikationTest {
                 app.überprüfeZahlenEingabe(eingabe.trim());
                 Assertions.fail("Expected IllegalStateException to be thrown.");
             } catch (IllegalStateException e) {
-                Assertions.assertEquals(">> Mit den eingebenen Zahlen würde das Maximum von 30 gespeicherten Zahlen überschritten werden.", e.getMessage());
+                Assertions.assertEquals("\n>> Mit den eingebenen Zahlen würde das Maximum von 30 gespeicherten Zahlen überschritten werden.", e.getMessage());
             }
             app.unglückszahlen.clear();
         }
@@ -224,7 +224,7 @@ public class LotterieApplikationTest {
                 app.überprüfeLöschEingabe(eingabe.trim());
                 Assertions.fail("Expected InputMismatchException to be thrown.");
             } catch (InputMismatchException e) {
-                Assertions.assertEquals(">> Inkorrekte Eingabe. Es gibt Zahlen, die nicht im korrekten Zahlenraum liegen.", e.getMessage());
+                Assertions.assertEquals("\n>> Inkorrekte Eingabe. Es gibt Zahlen, die nicht im korrekten Zahlenraum liegen.", e.getMessage());
             }
         }
     }
@@ -287,7 +287,7 @@ public class LotterieApplikationTest {
                 app.überprüfeAntwortEingabe(eingabe.trim());
                 Assertions.fail("Expected InputMismatchException to be thrown.");
             } catch (InputMismatchException e) {
-                Assertions.assertEquals(">> Inkorrekte Eingabe. Bitte geben Sie entweder Ja oder Nein an.", e.getMessage());
+                Assertions.assertEquals("\n>> Inkorrekte Eingabe. Bitte geben Sie entweder Ja oder Nein an.", e.getMessage());
             }
         }
     }

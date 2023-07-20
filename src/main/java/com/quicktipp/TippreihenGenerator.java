@@ -14,6 +14,5 @@ public interface TippreihenGenerator {
     boolean istGültigeZahl(int zahl);
     boolean istGenerierungMöglich(List<Integer> unglückszahlen);
     String getLotterieName();
-    int getAnzahlTippzahlen();
     int getZahlenraum();
 }

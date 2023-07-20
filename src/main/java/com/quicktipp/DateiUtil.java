@@ -45,7 +45,7 @@ public class DateiUtil {
             writer.close();
             
         } catch (IOException e) {
-            System.out.println("Ein interner Fehler ist aufgetreten: Es ist ein Problem beim Schreiben in die Datei aufgetreten.");
+            System.out.println("\n>> Ein interner Fehler ist aufgetreten: Es ist ein Problem beim Schreiben in die Datei aufgetreten.");
         }
     }
     /**
@@ -69,7 +69,7 @@ public class DateiUtil {
                 }
                 scanner.close();
             } catch (IOException e) {
-                System.out.println("Ein interner Fehler ist aufgetreten: Es ist ein Problem beim Lesen der Datei aufgetreten.");
+                System.out.println("\n>> Ein interner Fehler ist aufgetreten: Es ist ein Problem beim Lesen der Datei aufgetreten.");
             }
         }
         return geladeneUnglückszahlen;
@@ -106,7 +106,7 @@ public class DateiUtil {
 
                 writer.close();
             } catch (IOException e) {
-                System.out.println("Ein interner Fehler ist aufgetreten: Es ist ein Problem beim Schreiben in die Datei aufgetreten.");
+                System.out.println("\n>> Ein interner Fehler ist aufgetreten: Es ist ein Problem beim Schreiben in die Datei aufgetreten.");
             }
         }
     }
@@ -125,7 +125,7 @@ public class DateiUtil {
                 writer.write("");
                 writer.close();
             } catch (IOException e) {
-                System.out.println("Ein interner Fehler ist aufgetreten: Es ist ein Problem beim Schreiben in die Datei aufgetreten.");
+                System.out.println("\n>> Ein interner Fehler ist aufgetreten: Es ist ein Problem beim Schreiben in die Datei aufgetreten.");
             }
         }
     }
@@ -142,7 +142,7 @@ public class DateiUtil {
             LOGGER.addHandler(fileHandler);
             LOGGER.setUseParentHandlers(false); //Verhindert das Lognachricht in der Konsole ausgegeben wird
         } catch (SecurityException | IOException e) {
-            System.out.println("Ein interner Fehler ist aufgetreten:: Es ist ein Problem beim Initialisieren des Loggers aufgetreten.");
+            System.out.println("\n>> Ein interner Fehler ist aufgetreten:: Es ist ein Problem beim Initialisieren des Loggers aufgetreten.");
         }
     }
 
