@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 /**
  * Die Klasse LottoApplikation implementiert eine interaktive Anwendung zur Generierung von Quick-Tippreihen.
@@ -154,7 +155,7 @@ public class LotterieApplikation
     * @throws IllegalStateException Wenn bereits zu viele Unglückszahlen gespeichert sind.
     */
     public boolean überprüfeZahlenEingabe(String eingabe) throws NumberFormatException, InputMismatchException, IllegalStateException{
-        HashSet<Integer> temp = new HashSet<Integer>();
+        Set<Integer> temp = new HashSet<Integer>();
         String[] zahlEingaben = eingabe.split("\\s+");
         for (String s : zahlEingaben) {
             int zahl = Integer.parseInt(s);

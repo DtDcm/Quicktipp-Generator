@@ -1,4 +1,5 @@
 *.txt
 *.log
+/target
 logfile.log.lck
 .vscode/

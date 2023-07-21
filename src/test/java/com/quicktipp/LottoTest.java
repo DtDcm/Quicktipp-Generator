@@ -81,6 +81,21 @@ public class LottoTest {
     }
 
     @Test
+    public void generiereTippreiheZahlenAuschließenTest() {
+        List<Integer> unglückszahlen = new ArrayList<>();
+
+        for(int i = 1; i<= 43; i++){
+                unglückszahlen.add(i);
+        }
+        
+        lotto.generiereTippreihe(unglückszahlen);
+        List<Integer> generierteTippzahlen = lotto.getTippzahlen();
+
+        List<Integer> erwarteteTippzahlen = Arrays.asList(44, 45, 46, 47, 48, 49);
+        assertEquals(erwarteteTippzahlen, generierteTippzahlen);
+    }
+
+    @Test
     public void generiereTippreiheNichtMöglichTest() {
         List<Integer> unglückszahlen = new ArrayList<>();
         for(int i = 1; i<= 44; i++){

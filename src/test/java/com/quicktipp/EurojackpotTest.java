@@ -108,6 +108,21 @@ public class EurojackpotTest {
     }
 
     @Test
+    public void generiereTippreiheZahlenAuschließenTest() {
+        List<Integer> unglückszahlen = new ArrayList<>();
+
+        for(int i = 6; i<= 50; i++){
+                unglückszahlen.add(i);
+        }
+        
+        eurojackpot.generiereTippreihe(unglückszahlen);
+        List<Integer> generierteTippzahlen = eurojackpot.getTippzahlen();
+
+        List<Integer> erwarteteTippzahlen = Arrays.asList(1, 2, 3, 4, 5);
+        assertEquals(erwarteteTippzahlen, generierteTippzahlen);
+    }
+
+    @Test
     public void generiereTippreiheNichtMöglichTest() {
         List<Integer> unglückszahlen = new ArrayList<>();
         for(int i = 5; i<= 50; i++){
